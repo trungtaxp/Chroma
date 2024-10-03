@@ -27,12 +27,14 @@ namespace Chroma
             deviceComboBox.Items.AddRange(new string[] { "Rohde & Schwarz", "Keithley", "Chroma" });
             deviceComboBox.SelectedIndex = 0; // Default selection
             deviceComboBox.Location = new System.Drawing.Point(10, 10);
+            deviceComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             this.Controls.Add(deviceComboBox);
 
             // Initialize Button
             connectButton = new Button();
             connectButton.Text = "Connect";
             connectButton.Location = new System.Drawing.Point(10, 40);
+            connectButton.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             connectButton.Click += new EventHandler(connectButton_Click);
             this.Controls.Add(connectButton);
 
@@ -41,6 +43,7 @@ namespace Chroma
             functionGroupBox.Text = "Device Functions";
             functionGroupBox.Location = new System.Drawing.Point(10, 70);
             functionGroupBox.Size = new System.Drawing.Size(200, 200);
+            functionGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             functionGroupBox.Visible = false; // Initially hidden
             this.Controls.Add(functionGroupBox);
 
@@ -49,6 +52,7 @@ namespace Chroma
             loadingProgressBar.Style = ProgressBarStyle.Marquee;
             loadingProgressBar.Location = new System.Drawing.Point(connectButton.Right + 10, connectButton.Top);
             loadingProgressBar.Size = new System.Drawing.Size(100, 23);
+            loadingProgressBar.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             loadingProgressBar.Visible = false; // Initially hidden
             this.Controls.Add(loadingProgressBar);
         }
