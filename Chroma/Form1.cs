@@ -96,7 +96,8 @@ namespace Chroma
                 _ConnectDrive.Write("*IDN?\n");
                 var idnResponse__ConnectDrive = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
-                MessageBox.Show("Connected! \n" + idnResponse__ConnectDrive + "\n");
+                /*MessageBox.Show("Connected! \n" + idnResponse__ConnectDrive + "\n");*/
+                MessageBox.Show("Connected successfully!", "Success");
 
                 // Show function options based on the connected device
                 ShowFunctionOptions();
@@ -132,15 +133,25 @@ namespace Chroma
             {
                 // Add buttons for Keithley functions
                 Button function1Button = new Button();
-                function1Button.Text = "Function 1";
+                function1Button.Text = "Show DCV";
                 function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += (s, e) => { /* Add function 1 code here */ };
+                function1Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
+                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("DC Voltage: " + dcvResponse, "DCV Measurement");
+                };
                 functionGroupBox.Controls.Add(function1Button);
 
                 Button function2Button = new Button();
-                function2Button.Text = "Function 2";
+                function2Button.Text = "Show ACV";
                 function2Button.Location = new System.Drawing.Point(10, 50);
-                function2Button.Click += (s, e) => { /* Add function 2 code here */ };
+                function2Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write(":MEAS:VOLT:AC?\n");
+                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("AC Voltage: " + dcvResponse, "ACV Measurement");
+                };
                 functionGroupBox.Controls.Add(function2Button);
             }
             else if (selectedDevice == "Chroma")
