@@ -61,13 +61,13 @@ namespace Chroma
             switch (selectedDevice)
             {
                 case "Rohde & Schwarz":
-                    connectionString = "GPIB0::16::INSTR"; // Example connection string
+                    connectionString = "GPIB0::7::INSTR"; // Rohde & Schwarz connection string
                     break;
                 case "Keithley":
-                    connectionString = "GPIB0::7::INSTR"; // Example connection string
+                    connectionString = "GPIB0::16::INSTR"; // Keithley connection string
                     break;
-                case " ProgressBa":
-                    connectionString = "TCPIP0::192.168.1.30::5200::SOCKET"; // Example connection string
+                case "Chroma":
+                    connectionString = "TCPIP0::192.168.1.30::5200::SOCKET"; // Chroma connection string
                     break;
             }
 
