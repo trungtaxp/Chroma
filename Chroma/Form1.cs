@@ -65,13 +65,13 @@ namespace Chroma
             switch (selectedDevice)
             {
                 case "Rohde & Schwarz":
-                    connectionString = "GPIB0::7::INSTR"; // Rohde & Schwarz connection string
+                    connectionString = "TCPIP0::192.168.1.30::5200::SOCKET"; // Rohde & Schwarz connection string
                     break;
                 case "Keithley":
                     connectionString = "GPIB0::16::INSTR"; // Keithley connection string
                     break;
                 case "Chroma":
-                    connectionString = "TCPIP0::192.168.1.30::5200::SOCKET"; // Chroma connection string
+                    connectionString = "GPIB0::7::INSTR"; // Chroma connection string
                     break;
             }
 
@@ -158,16 +158,37 @@ namespace Chroma
             {
                 // Add buttons for Chroma functions
                 Button function1Button = new Button();
-                function1Button.Text = "Function 1";
+                function1Button.Text = "Show Voltage";
                 function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += (s, e) => { /* Add function 1 code here */ };
+                function1Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("Voltage: " + voltageResponse, "Voltage Measurement");
+                };
                 functionGroupBox.Controls.Add(function1Button);
 
                 Button function2Button = new Button();
-                function2Button.Text = "Function 2";
+                function2Button.Text = "Show Current";
                 function2Button.Location = new System.Drawing.Point(10, 50);
-                function2Button.Click += (s, e) => { /* Add function 2 code here */ };
+                function2Button.Click += async (s, e) => 
+                {
+                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("Current: " + voltageResponse, "Current Measurement");
+                };
                 functionGroupBox.Controls.Add(function2Button);
+                
+                Button function3Button = new Button();
+                function3Button.Text = "Show Power";
+                function3Button.Location = new System.Drawing.Point(10, 80);
+                function3Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("Power: " + voltageResponse, "Power Measurement");
+                };
+                functionGroupBox.Controls.Add(function3Button);
             }
 
             functionGroupBox.Visible = true; // Show the GroupBox
