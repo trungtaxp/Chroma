@@ -47,8 +47,8 @@ namespace Chroma
             // Initialize ProgressBar for loading
             loadingProgressBar = new ProgressBar();
             loadingProgressBar.Style = ProgressBarStyle.Marquee;
-            loadingProgressBar.Location = new System.Drawing.Point(10, 280);
-            loadingProgressBar.Size = new System.Drawing.Size(200, 30);
+            loadingProgressBar.Location = new System.Drawing.Point(connectButton.Right + 10, connectButton.Top);
+            loadingProgressBar.Size = new System.Drawing.Size(100, 23);
             loadingProgressBar.Visible = false; // Initially hidden
             this.Controls.Add(loadingProgressBar);
         }
