@@ -42,7 +42,7 @@ namespace Chroma
             functionGroupBox = new GroupBox();
             functionGroupBox.Text = "Device Functions";
             functionGroupBox.Location = new System.Drawing.Point(10, 70);
-            functionGroupBox.Size = new System.Drawing.Size(200, 200);
+            functionGroupBox.Size = new System.Drawing.Size(250, 250);
             functionGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             functionGroupBox.Visible = false; // Initially hidden
             this.Controls.Add(functionGroupBox);
@@ -118,9 +118,13 @@ namespace Chroma
             {
                 // Add buttons for Rohde & Schwarz functions
                 Button function1Button = new Button();
-                function1Button.Text = "Function 1";
+                function1Button.Text = "Show data";
                 function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += (s, e) => { /* Add function 1 code here */ };
+                function1Button.Click += async (s, e) =>
+                {
+                    await ShowRohdeSchwarzDataAsync();
+                };
+                
                 functionGroupBox.Controls.Add(function1Button);
 
                 Button function2Button = new Button();
@@ -128,6 +132,8 @@ namespace Chroma
                 function2Button.Location = new System.Drawing.Point(10, 50);
                 function2Button.Click += (s, e) => { /* Add function 2 code here */ };
                 functionGroupBox.Controls.Add(function2Button);
+                
+                
             }
             else if (selectedDevice == "Keithley")
             {
@@ -193,5 +199,43 @@ namespace Chroma
 
             functionGroupBox.Visible = true; // Show the GroupBox
         }
+        
+        private async Task ShowRohdeSchwarzDataAsync()
+        {
+            try
+            {
+                _ConnectDrive.Write("FETCH:DATA?\n");
+                var dataResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                // Assuming dataResponse is a comma-separated string of data points
+                var dataPoints = dataResponse.Split(',').Select(double.Parse).ToArray();
+
+                // Show data in a chart (you need to add a Chart control to your form)
+                Chart dataChart = new Chart();
+                dataChart.Location = new System.Drawing.Point(10, 110);
+                dataChart.Size = new System.Drawing.Size(400, 300);
+                functionGroupBox.Controls.Add(dataChart);
+
+                var series = new Series
+                {
+                    Name = "Data",
+                    Color = Color.Blue,
+                    ChartType = SeriesChartType.Line
+                };
+
+                dataChart.Series.Add(series);
+
+                for (int i = 0; i < dataPoints.Length; i++)
+                {
+                    series.Points.AddXY(i, dataPoints[i]);
+                }
+
+                dataChart.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error fetching data: " + ex.Message, "Error");
+            }
+        }
+        
     }
 }
