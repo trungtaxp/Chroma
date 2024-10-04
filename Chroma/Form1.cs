@@ -16,12 +16,106 @@ namespace Chroma
         private Button connectButton;
         private GroupBox functionGroupBox;
         private ProgressBar loadingProgressBar;
+        private SplitContainer mainSplitContainer; // Define as class-level field
+        private SplitContainer secondarySplitContainer; // Define as class-level field
 
         public Form1()
         {
             InitializeComponent();
             InitializeCustomComponents();
             SetFullScreen();
+            ConnectToAllDevices();
+        }
+
+        private async void ConnectToAllDevices()
+        {
+            await ConnectDeviceAsync("Rohde & Schwarz", "TCPIP0::192.168.1.30::5200::SOCKET");
+            await ConnectDeviceAsync("Keithley", "GPIB0::16::INSTR");
+            await ConnectDeviceAsync("Chroma", "GPIB0::7::INSTR");
+        }
+
+        private async Task ConnectDeviceAsync(string deviceName, string connectionString)
+        {
+            try
+            {
+                _ConnectDrive = GlobalResourceManager.Open(connectionString) as IMessageBasedSession;
+                _ConnectDrive.TimeoutMilliseconds = 3000; // Timeout for VISA Read Operations
+                _ConnectDrive.SendEndEnabled = true;
+                _ConnectDrive.TerminationCharacterEnabled = true;
+                _ConnectDrive.Clear();
+                _ConnectDrive.Write("*IDN?\n");
+                var idnResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+
+                MessageBox.Show($"Connected to {deviceName} successfully!", "Success");
+
+                ShowFunctionOptions(deviceName);
+            }
+            catch (Ivi.Visa.NativeVisaException e)
+            {
+                MessageBox.Show($"Cannot connect to {deviceName}:\n{e.Message}", "Error");
+            }
+        }
+
+        private void ShowFunctionOptions(string deviceName)
+        {
+            GroupBox functionGroupBox = new GroupBox();
+            functionGroupBox.Text = deviceName;
+            functionGroupBox.Dock = DockStyle.Fill;
+
+            if (deviceName == "Rohde & Schwarz")
+            {
+                // Add buttons for Rohde & Schwarz functions
+                Button function1Button = new Button();
+                function1Button.Text = "Show data";
+                function1Button.Location = new System.Drawing.Point(10, 20);
+                function1Button.Click += async (s, e) =>
+                {
+                    await ShowRohdeSchwarzDataAsync();
+                };
+                functionGroupBox.Controls.Add(function1Button);
+            }
+            else if (deviceName == "Keithley")
+            {
+                // Add buttons for Keithley functions
+                Button function1Button = new Button();
+                function1Button.Text = "Show DCV";
+                function1Button.Location = new System.Drawing.Point(10, 20);
+                function1Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
+                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("DC Voltage: " + dcvResponse, "DCV Measurement");
+                };
+                functionGroupBox.Controls.Add(function1Button);
+            }
+            else if (deviceName == "Chroma")
+            {
+                // Add buttons for Chroma functions
+                Button function1Button = new Button();
+                function1Button.Text = "Show Voltage";
+                function1Button.Location = new System.Drawing.Point(10, 20);
+                function1Button.Click += async (s, e) =>
+                {
+                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    MessageBox.Show("Voltage: " + voltageResponse, "Voltage Measurement");
+                };
+                functionGroupBox.Controls.Add(function1Button);
+            }
+
+            // Add the functionGroupBox to the appropriate panel
+            if (deviceName == "Rohde & Schwarz")
+            {
+                mainSplitContainer.Panel1.Controls.Add(functionGroupBox);
+            }
+            else if (deviceName == "Keithley")
+            {
+                secondarySplitContainer.Panel1.Controls.Add(functionGroupBox);
+            }
+            else if (deviceName == "Chroma")
+            {
+                secondarySplitContainer.Panel2.Controls.Add(functionGroupBox);
+            }
         }
         
         private void SetFullScreen()
@@ -39,14 +133,14 @@ namespace Chroma
         private void InitializeCustomComponents()
         {
             // Initialize SplitContainer for main division
-            SplitContainer mainSplitContainer = new SplitContainer();
+            mainSplitContainer = new SplitContainer();
             mainSplitContainer.Dock = DockStyle.Fill;
             mainSplitContainer.Orientation = Orientation.Vertical;
             mainSplitContainer.SplitterDistance = (int)(this.ClientSize.Width * 2 / 3.0); // 2/3 for "Rohde & Schwarz"
             this.Controls.Add(mainSplitContainer);
 
             // Initialize SplitContainer for secondary division
-            SplitContainer secondarySplitContainer = new SplitContainer();
+            secondarySplitContainer = new SplitContainer();
             secondarySplitContainer.Dock = DockStyle.Fill;
             secondarySplitContainer.Orientation = Orientation.Horizontal;
             secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2; // 1/2 for "Keithley" and "Chroma"
