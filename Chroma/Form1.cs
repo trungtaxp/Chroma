@@ -4,20 +4,17 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using Ivi.Visa; //This .NET assembly is installed with your NI VISA installation
-using IviVisaExtended; //Custom extention functions for Ivi.Visa - all are defined in the IviVisaExtended Project
+using Ivi.Visa;
+using IviVisaExtended;
 
 namespace Chroma
 {
     public partial class Form1 : Form
     {
         public static IMessageBasedSession _ConnectDrive = null;
-        private ComboBox deviceComboBox;
-        private Button connectButton;
-        private GroupBox functionGroupBox;
-        private ProgressBar loadingProgressBar;
-        private SplitContainer mainSplitContainer; // Define as class-level field
-        private SplitContainer secondarySplitContainer; // Define as class-level field
+        private SplitContainer mainSplitContainer;
+        private SplitContainer secondarySplitContainer;
+        private GroupBox functionGroupBox; // Define as class-level field
 
         public Form1()
         {
@@ -39,7 +36,7 @@ namespace Chroma
             try
             {
                 _ConnectDrive = GlobalResourceManager.Open(connectionString) as IMessageBasedSession;
-                _ConnectDrive.TimeoutMilliseconds = 3000; // Timeout for VISA Read Operations
+                _ConnectDrive.TimeoutMilliseconds = 3000;
                 _ConnectDrive.SendEndEnabled = true;
                 _ConnectDrive.TerminationCharacterEnabled = true;
                 _ConnectDrive.Clear();
@@ -58,28 +55,31 @@ namespace Chroma
 
         private void ShowFunctionOptions(string deviceName)
         {
-            GroupBox functionGroupBox = new GroupBox();
-            functionGroupBox.Text = deviceName;
-            functionGroupBox.Dock = DockStyle.Fill;
+            functionGroupBox = new GroupBox
+            {
+                Text = deviceName,
+                Dock = DockStyle.Fill
+            };
 
             if (deviceName == "Rohde & Schwarz")
             {
                 // Add buttons for Rohde & Schwarz functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show data";
-                function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += async (s, e) =>
+                Button function1Button = new Button
                 {
-                    await ShowRohdeSchwarzDataAsync();
+                    Text = "Show data",
+                    Location = new System.Drawing.Point(10, 20)
                 };
+                function1Button.Click += async (s, e) => await ShowRohdeSchwarzDataAsync();
                 functionGroupBox.Controls.Add(function1Button);
             }
             else if (deviceName == "Keithley")
             {
                 // Add buttons for Keithley functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show DCV";
-                function1Button.Location = new System.Drawing.Point(10, 20);
+                Button function1Button = new Button
+                {
+                    Text = "Show DCV",
+                    Location = new System.Drawing.Point(10, 20)
+                };
                 function1Button.Click += async (s, e) =>
                 {
                     _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
@@ -91,9 +91,11 @@ namespace Chroma
             else if (deviceName == "Chroma")
             {
                 // Add buttons for Chroma functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show Voltage";
-                function1Button.Location = new System.Drawing.Point(10, 20);
+                Button function1Button = new Button
+                {
+                    Text = "Show Voltage",
+                    Location = new System.Drawing.Point(10, 20)
+                };
                 function1Button.Click += async (s, e) =>
                 {
                     _ConnectDrive.Write("MEAS:VOLT?\n");
@@ -103,7 +105,6 @@ namespace Chroma
                 functionGroupBox.Controls.Add(function1Button);
             }
 
-            // Add the functionGroupBox to the appropriate panel
             if (deviceName == "Rohde & Schwarz")
             {
                 mainSplitContainer.Panel1.Controls.Add(functionGroupBox);
@@ -117,13 +118,10 @@ namespace Chroma
                 secondarySplitContainer.Panel2.Controls.Add(functionGroupBox);
             }
         }
-        
+
         private void SetFullScreen()
         {
-            // Lấy thông tin về màn hình hiện tại
             Screen screen = Screen.FromControl(this);
-    
-            // Đặt kích thước form để phù hợp với kích thước màn hình
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.WindowState = FormWindowState.Maximized;
             this.Bounds = screen.Bounds;
@@ -132,220 +130,60 @@ namespace Chroma
 
         private void InitializeCustomComponents()
         {
-            // Initialize SplitContainer for main division
-            mainSplitContainer = new SplitContainer();
-            mainSplitContainer.Dock = DockStyle.Fill;
-            mainSplitContainer.Orientation = Orientation.Vertical;
-            mainSplitContainer.SplitterDistance = (int)(this.ClientSize.Width * 2 / 3.0); // 2/3 for "Rohde & Schwarz"
+            mainSplitContainer = new SplitContainer
+            {
+                Dock = DockStyle.Fill,
+                Orientation = Orientation.Vertical,
+                SplitterDistance = (int)(this.ClientSize.Width * 2 / 3.0)
+            };
             this.Controls.Add(mainSplitContainer);
 
-            // Initialize SplitContainer for secondary division
-            secondarySplitContainer = new SplitContainer();
-            secondarySplitContainer.Dock = DockStyle.Fill;
-            secondarySplitContainer.Orientation = Orientation.Horizontal;
-            secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2; // 1/2 for "Keithley" and "Chroma"
+            secondarySplitContainer = new SplitContainer
+            {
+                Dock = DockStyle.Fill,
+                Orientation = Orientation.Horizontal,
+                SplitterDistance = mainSplitContainer.ClientSize.Height / 2 // Corrected initialization
+            };
             mainSplitContainer.Panel2.Controls.Add(secondarySplitContainer);
 
-            // Initialize GroupBox for "Rohde & Schwarz"
-            GroupBox rohdeSchwarzGroupBox = new GroupBox();
-            rohdeSchwarzGroupBox.Text = "Rohde & Schwarz";
-            rohdeSchwarzGroupBox.Dock = DockStyle.Fill;
+            GroupBox rohdeSchwarzGroupBox = new GroupBox
+            {
+                Text = "Rohde & Schwarz",
+                Dock = DockStyle.Fill
+            };
             mainSplitContainer.Panel1.Controls.Add(rohdeSchwarzGroupBox);
 
-            // Initialize GroupBox for "Keithley"
-            GroupBox keithleyGroupBox = new GroupBox();
-            keithleyGroupBox.Text = "Keithley";
-            keithleyGroupBox.Dock = DockStyle.Fill;
+            GroupBox keithleyGroupBox = new GroupBox
+            {
+                Text = "Keithley",
+                Dock = DockStyle.Fill
+            };
             secondarySplitContainer.Panel1.Controls.Add(keithleyGroupBox);
 
-            // Initialize GroupBox for "Chroma"
-            GroupBox chromaGroupBox = new GroupBox();
-            chromaGroupBox.Text = "Chroma";
-            chromaGroupBox.Dock = DockStyle.Fill;
+            GroupBox chromaGroupBox = new GroupBox
+            {
+                Text = "Chroma",
+                Dock = DockStyle.Fill
+            };
             secondarySplitContainer.Panel2.Controls.Add(chromaGroupBox);
 
-            // Initialize ComboBox
-            deviceComboBox = new ComboBox();
-            deviceComboBox.Items.AddRange(new string[] { "Rohde & Schwarz", "Keithley", "Chroma" });
-            deviceComboBox.SelectedIndex = 0; // Default selection
-            deviceComboBox.Location = new System.Drawing.Point(10, 10);
-            deviceComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.Controls.Add(deviceComboBox);
-
-            // Initialize Button
-            connectButton = new Button();
-            connectButton.Text = "Connect";
-            connectButton.Location = new System.Drawing.Point(10, 40);
-            connectButton.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            connectButton.Click += new EventHandler(connectButton_Click);
-            this.Controls.Add(connectButton);
-
-            // Initialize ProgressBar for loading
-            loadingProgressBar = new ProgressBar();
-            loadingProgressBar.Style = ProgressBarStyle.Marquee;
-            loadingProgressBar.Location = new System.Drawing.Point(connectButton.Right + 10, connectButton.Top);
-            loadingProgressBar.Size = new System.Drawing.Size(100, 23);
-            loadingProgressBar.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            loadingProgressBar.Visible = false; // Initially hidden
-            this.Controls.Add(loadingProgressBar);
+            // Adjust the SplitterDistance to divide the remaining 1/3 between Keithley and Chroma
+            secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2;
         }
 
-        private async void connectButton_Click(object sender, EventArgs e)
-        {
-            string selectedDevice = deviceComboBox.SelectedItem.ToString();
-            string connectionString = "";
-
-            switch (selectedDevice)
-            {
-                case "Rohde & Schwarz":
-                    connectionString = "TCPIP0::192.168.1.30::5200::SOCKET"; // Rohde & Schwarz connection string
-                    break;
-                case "Keithley":
-                    connectionString = "GPIB0::16::INSTR"; // Keithley connection string
-                    break;
-                case "Chroma":
-                    connectionString = "GPIB0::7::INSTR"; // Chroma connection string
-                    break;
-            }
-
-            // Show loading progress bar
-            loadingProgressBar.Visible = true;
-
-            await Instrument_ConnectAsync(connectionString);
-
-            // Hide loading progress bar
-            loadingProgressBar.Visible = false;
-        }
-
-        private async Task Instrument_ConnectAsync(string connectionString)
-        {
-            try
-            {
-                _ConnectDrive = GlobalResourceManager.Open(connectionString) as IMessageBasedSession;
-                _ConnectDrive.TimeoutMilliseconds = 3000; //Timeout for VISA Read Operations
-                _ConnectDrive.SendEndEnabled = true;
-                _ConnectDrive.TerminationCharacterEnabled = true;
-                _ConnectDrive.Clear();
-                _ConnectDrive.Write("*IDN?\n");
-                var idnResponse__ConnectDrive = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-
-                /*MessageBox.Show("Connected! \n" + idnResponse__ConnectDrive + "\n");*/
-                MessageBox.Show("Connected successfully!", "Success");
-
-                // Show function options based on the connected device
-                ShowFunctionOptions();
-            }
-            catch (Ivi.Visa.NativeVisaException e)
-            {
-                MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
-            }
-        }
-
-        private void ShowFunctionOptions()
-        {
-            functionGroupBox.Controls.Clear(); // Clear previous controls
-
-            string selectedDevice = deviceComboBox.SelectedItem.ToString();
-
-            if (selectedDevice == "Rohde & Schwarz")
-            {
-                // Add buttons for Rohde & Schwarz functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show data";
-                function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += async (s, e) =>
-                {
-                    await ShowRohdeSchwarzDataAsync();
-                };
-                
-                functionGroupBox.Controls.Add(function1Button);
-
-                Button function2Button = new Button();
-                function2Button.Text = "Function 2";
-                function2Button.Location = new System.Drawing.Point(10, 50);
-                function2Button.Click += (s, e) => { /* Add function 2 code here */ };
-                functionGroupBox.Controls.Add(function2Button);
-                
-                
-            }
-            else if (selectedDevice == "Keithley")
-            {
-                // Add buttons for Keithley functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show DCV";
-                function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += async (s, e) =>
-                {
-                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
-                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                    MessageBox.Show("DC Voltage: " + dcvResponse, "DCV Measurement");
-                };
-                functionGroupBox.Controls.Add(function1Button);
-
-                Button function2Button = new Button();
-                function2Button.Text = "Show ACV";
-                function2Button.Location = new System.Drawing.Point(10, 50);
-                function2Button.Click += async (s, e) =>
-                {
-                    _ConnectDrive.Write(":MEAS:VOLT:AC?\n");
-                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                    MessageBox.Show("AC Voltage: " + dcvResponse, "ACV Measurement");
-                };
-                functionGroupBox.Controls.Add(function2Button);
-            }
-            else if (selectedDevice == "Chroma")
-            {
-                // Add buttons for Chroma functions
-                Button function1Button = new Button();
-                function1Button.Text = "Show Voltage";
-                function1Button.Location = new System.Drawing.Point(10, 20);
-                function1Button.Click += async (s, e) =>
-                {
-                    _ConnectDrive.Write("MEAS:VOLT?\n");
-                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                    MessageBox.Show("Voltage: " + voltageResponse, "Voltage Measurement");
-                };
-                functionGroupBox.Controls.Add(function1Button);
-
-                Button function2Button = new Button();
-                function2Button.Text = "Show Current";
-                function2Button.Location = new System.Drawing.Point(10, 50);
-                function2Button.Click += async (s, e) => 
-                {
-                    _ConnectDrive.Write("MEAS:VOLT?\n");
-                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                    MessageBox.Show("Current: " + voltageResponse, "Current Measurement");
-                };
-                functionGroupBox.Controls.Add(function2Button);
-                
-                Button function3Button = new Button();
-                function3Button.Text = "Show Power";
-                function3Button.Location = new System.Drawing.Point(10, 80);
-                function3Button.Click += async (s, e) =>
-                {
-                    _ConnectDrive.Write("MEAS:VOLT?\n");
-                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                    MessageBox.Show("Power: " + voltageResponse, "Power Measurement");
-                };
-                functionGroupBox.Controls.Add(function3Button);
-            }
-
-            functionGroupBox.Visible = true; // Show the GroupBox
-        }
-        
         private async Task ShowRohdeSchwarzDataAsync()
         {
             try
             {
                 _ConnectDrive.Write("FETCH:DATA?\n");
                 var dataResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                // Assuming dataResponse is a comma-separated string of data points
                 var dataPoints = dataResponse.Split(',').Select(double.Parse).ToArray();
 
-                // Show data in a chart (you need to add a Chart control to your form)
-                Chart dataChart = new Chart();
-                dataChart.Location = new System.Drawing.Point(10, 110);
-                dataChart.Size = new System.Drawing.Size(400, 300);
+                Chart dataChart = new Chart
+                {
+                    Location = new System.Drawing.Point(10, 110),
+                    Size = new System.Drawing.Size(400, 300)
+                };
                 functionGroupBox.Controls.Add(dataChart);
 
                 var series = new Series
@@ -369,6 +207,5 @@ namespace Chroma
                 MessageBox.Show("Error fetching data: " + ex.Message, "Error");
             }
         }
-        
     }
 }
