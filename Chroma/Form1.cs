@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using Ivi.Visa; //This .NET assembly is installed with your NI VISA installation
 using IviVisaExtended; //Custom extention functions for Ivi.Visa - all are defined in the IviVisaExtended Project
 
@@ -18,6 +21,19 @@ namespace Chroma
         {
             InitializeComponent();
             InitializeCustomComponents();
+            SetFullScreen();
+        }
+        
+        private void SetFullScreen()
+        {
+            // Lấy thông tin về màn hình hiện tại
+            Screen screen = Screen.FromControl(this);
+    
+            // Đặt kích thước form để phù hợp với kích thước màn hình
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.WindowState = FormWindowState.Maximized;
+            this.Bounds = screen.Bounds;
+            this.TopMost = true;
         }
 
         private void InitializeCustomComponents()
