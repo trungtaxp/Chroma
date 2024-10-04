@@ -38,6 +38,38 @@ namespace Chroma
 
         private void InitializeCustomComponents()
         {
+            // Initialize SplitContainer for main division
+            SplitContainer mainSplitContainer = new SplitContainer();
+            mainSplitContainer.Dock = DockStyle.Fill;
+            mainSplitContainer.Orientation = Orientation.Vertical;
+            mainSplitContainer.SplitterDistance = (int)(this.ClientSize.Width * 2 / 3.0); // 2/3 for "Rohde & Schwarz"
+            this.Controls.Add(mainSplitContainer);
+
+            // Initialize SplitContainer for secondary division
+            SplitContainer secondarySplitContainer = new SplitContainer();
+            secondarySplitContainer.Dock = DockStyle.Fill;
+            secondarySplitContainer.Orientation = Orientation.Horizontal;
+            secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2; // 1/2 for "Keithley" and "Chroma"
+            mainSplitContainer.Panel2.Controls.Add(secondarySplitContainer);
+
+            // Initialize GroupBox for "Rohde & Schwarz"
+            GroupBox rohdeSchwarzGroupBox = new GroupBox();
+            rohdeSchwarzGroupBox.Text = "Rohde & Schwarz";
+            rohdeSchwarzGroupBox.Dock = DockStyle.Fill;
+            mainSplitContainer.Panel1.Controls.Add(rohdeSchwarzGroupBox);
+
+            // Initialize GroupBox for "Keithley"
+            GroupBox keithleyGroupBox = new GroupBox();
+            keithleyGroupBox.Text = "Keithley";
+            keithleyGroupBox.Dock = DockStyle.Fill;
+            secondarySplitContainer.Panel1.Controls.Add(keithleyGroupBox);
+
+            // Initialize GroupBox for "Chroma"
+            GroupBox chromaGroupBox = new GroupBox();
+            chromaGroupBox.Text = "Chroma";
+            chromaGroupBox.Dock = DockStyle.Fill;
+            secondarySplitContainer.Panel2.Controls.Add(chromaGroupBox);
+
             // Initialize ComboBox
             deviceComboBox = new ComboBox();
             deviceComboBox.Items.AddRange(new string[] { "Rohde & Schwarz", "Keithley", "Chroma" });
@@ -53,15 +85,6 @@ namespace Chroma
             connectButton.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             connectButton.Click += new EventHandler(connectButton_Click);
             this.Controls.Add(connectButton);
-
-            // Initialize GroupBox for functions
-            functionGroupBox = new GroupBox();
-            functionGroupBox.Text = "Device Functions";
-            functionGroupBox.Location = new System.Drawing.Point(10, 70);
-            functionGroupBox.Size = new System.Drawing.Size(250, 250);
-            functionGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            functionGroupBox.Visible = false; // Initially hidden
-            this.Controls.Add(functionGroupBox);
 
             // Initialize ProgressBar for loading
             loadingProgressBar = new ProgressBar();
