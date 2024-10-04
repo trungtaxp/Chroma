@@ -121,11 +121,8 @@ namespace Chroma
 
         private void SetFullScreen()
         {
-            Screen screen = Screen.FromControl(this);
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.WindowState = FormWindowState.Maximized;
-            this.Bounds = screen.Bounds;
-            this.TopMost = true;
         }
 
         private void InitializeCustomComponents()
@@ -134,7 +131,7 @@ namespace Chroma
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = (int)(this.ClientSize.Width * 2 / 3.0)
+                SplitterDistance = (int)(this.ClientSize.Width * 4 / 6.0)
             };
             this.Controls.Add(mainSplitContainer);
 
