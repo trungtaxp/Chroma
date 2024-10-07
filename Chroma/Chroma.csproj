@@ -65,6 +65,9 @@
     </Compile>
     <Compile Include="Commands\KeithleyCommands.cs" />
     <Compile Include="Commands\RohdeSchwarzCommands.cs" />
+    <Compile Include="Form1\DeviceConnection\ChromaConnection.cs" />
+    <Compile Include="Form1\DeviceConnection\KeithleyConnection.cs" />
+    <Compile Include="Form1\DeviceConnection\RohdeSchwarzConnection.cs" />
     <Compile Include="Form1\Form1.Connection.cs" />
     <Compile Include="Form1\Form1.cs">
       <SubType>Form</SubType>
@@ -73,7 +76,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1\Form1.DeviceConfig.cs" />
-    <Compile Include="Form1\Form1.RohdeSchwarz.cs" />
     <Compile Include="Form1\Form1.UI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
