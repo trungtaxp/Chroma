@@ -14,6 +14,9 @@ namespace Chroma
         public static IMessageBasedSession _ConnectDrive = null;
         private SplitContainer mainSplitContainer;
         private SplitContainer secondarySplitContainer;
+        private GroupBox rohdeSchwarzGroupBox;
+        private GroupBox keithleyGroupBox;
+        private GroupBox chromaGroupBox;
         private GroupBox functionGroupBox; // Define as class-level field
 
         public Form1()
@@ -33,6 +36,15 @@ namespace Chroma
 
         private async Task ConnectDeviceAsync(string deviceName, string connectionString)
         {
+            Label statusLabel = new Label
+            {
+                Text = $"Connecting to {deviceName}...",
+                Dock = DockStyle.Top,
+                ForeColor = Color.Red
+            };
+
+            AddStatusLabelToGroupBox(deviceName, statusLabel);
+
             try
             {
                 _ConnectDrive = GlobalResourceManager.Open(connectionString) as IMessageBasedSession;
@@ -43,13 +55,35 @@ namespace Chroma
                 _ConnectDrive.Write("*IDN?\n");
                 var idnResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
-                MessageBox.Show($"Connected to {deviceName} successfully!", "Success");
+                statusLabel.Text = $"Connected to {deviceName} successfully!";
+                statusLabel.ForeColor = Color.Green;
 
                 ShowFunctionOptions(deviceName);
+
+                if (deviceName == "Rohde & Schwarz")
+                {
+                    await ShowRohdeSchwarzDataAsync();
+                }
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                MessageBox.Show($"Cannot connect to {deviceName}:\n{e.Message}", "Error");
+                statusLabel.Text = $"Cannot connect to {deviceName}: {e.Message}";
+            }
+        }
+
+        private void AddStatusLabelToGroupBox(string deviceName, Label statusLabel)
+        {
+            if (deviceName == "Rohde & Schwarz")
+            {
+                rohdeSchwarzGroupBox.Controls.Add(statusLabel);
+            }
+            else if (deviceName == "Keithley")
+            {
+                keithleyGroupBox.Controls.Add(statusLabel);
+            }
+            else if (deviceName == "Chroma")
+            {
+                chromaGroupBox.Controls.Add(statusLabel);
             }
         }
 
@@ -107,15 +141,15 @@ namespace Chroma
 
             if (deviceName == "Rohde & Schwarz")
             {
-                mainSplitContainer.Panel1.Controls.Add(functionGroupBox);
+                rohdeSchwarzGroupBox.Controls.Add(functionGroupBox);
             }
             else if (deviceName == "Keithley")
             {
-                secondarySplitContainer.Panel1.Controls.Add(functionGroupBox);
+                keithleyGroupBox.Controls.Add(functionGroupBox);
             }
             else if (deviceName == "Chroma")
             {
-                secondarySplitContainer.Panel2.Controls.Add(functionGroupBox);
+                chromaGroupBox.Controls.Add(functionGroupBox);
             }
         }
 
@@ -143,21 +177,21 @@ namespace Chroma
             };
             mainSplitContainer.Panel2.Controls.Add(secondarySplitContainer);
 
-            GroupBox rohdeSchwarzGroupBox = new GroupBox
+            rohdeSchwarzGroupBox = new GroupBox
             {
                 Text = "Rohde & Schwarz",
                 Dock = DockStyle.Fill
             };
             mainSplitContainer.Panel1.Controls.Add(rohdeSchwarzGroupBox);
 
-            GroupBox keithleyGroupBox = new GroupBox
+            keithleyGroupBox = new GroupBox
             {
                 Text = "Keithley",
                 Dock = DockStyle.Fill
             };
             secondarySplitContainer.Panel1.Controls.Add(keithleyGroupBox);
 
-            GroupBox chromaGroupBox = new GroupBox
+            chromaGroupBox = new GroupBox
             {
                 Text = "Chroma",
                 Dock = DockStyle.Fill
