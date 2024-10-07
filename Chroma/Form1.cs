@@ -63,6 +63,18 @@ namespace Chroma
                 if (deviceName == "Rohde & Schwarz")
                 {
                     await ShowRohdeSchwarzDataAsync();
+                    // Create and display the "Set Parameters" button
+                    Button setParametersButton = new Button
+                    {
+                        Text = "Set Parameters",
+                        Location = new System.Drawing.Point(10, 20)
+                    };
+                    setParametersButton.Click += (s, e) => 
+                    {
+                        // Add logic to set parameters here
+                        MessageBox.Show("Set Parameters clicked", "Set Parameters");
+                    };
+                    rohdeSchwarzGroupBox.Controls.Add(setParametersButton);
                 }
                 else if (deviceName == "Keithley")
                 {
@@ -110,7 +122,8 @@ namespace Chroma
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                statusLabel.Text = $"Cannot connect to {deviceName}: {e.Message}";
+                /*statusLabel.Text = $"Cannot connect to {deviceName}: {e.Message}";*/
+                statusLabel.Text = $"Cannot connect to {deviceName}";
             }
         }
 
