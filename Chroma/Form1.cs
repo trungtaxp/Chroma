@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Ivi.Visa;
 using IviVisaExtended;
+using System.IO;
 
 namespace Chroma
 {
@@ -23,35 +24,61 @@ namespace Chroma
         private ICommands keithleyCommands = new KeithleyCommands();
         private ICommands chromaCommands = new ChromaCommands();
 
+        private DeviceConfig rohdeSchwarzConfig;
+        private DeviceConfig keithleyConfig;
+        private DeviceConfig chromaConfig;
+
         public Form1()
         {
             InitializeComponent();
             InitializeCustomComponents();
             SetFullScreen();
+            LoadDeviceConfigs();
             ConnectToAllDevices();
+        }
+
+        private void LoadDeviceConfigs()
+        {
+            rohdeSchwarzConfig = new DeviceConfig
+            {
+                DeviceName = Environment.GetEnvironmentVariable("ROHDE_SCHWARZ_NAME") ?? "Rohde & Schwarz",
+                ConnectionString = Environment.GetEnvironmentVariable("ROHDE_SCHWARZ_CONN") ?? "TCPIP0::192.168.1.30::5200::SOCKET"
+            };
+
+            keithleyConfig = new DeviceConfig
+            {
+                DeviceName = Environment.GetEnvironmentVariable("KEITHLEY_NAME") ?? "Keithley",
+                ConnectionString = Environment.GetEnvironmentVariable("KEITHLEY_CONN") ?? "GPIB0::16::INSTR"
+            };
+
+            chromaConfig = new DeviceConfig
+            {
+                DeviceName = Environment.GetEnvironmentVariable("CHROMA_NAME") ?? "Chroma",
+                ConnectionString = Environment.GetEnvironmentVariable("CHROMA_CONN") ?? "GPIB0::7::INSTR"
+            };
         }
 
         private async void ConnectToAllDevices()
         {
-            await ConnectDeviceAsync("Rohde & Schwarz", "TCPIP0::192.168.1.30::5200::SOCKET", rohdeSchwarzCommands);
-            await ConnectDeviceAsync("Keithley", "GPIB0::16::INSTR", keithleyCommands);
-            await ConnectDeviceAsync("Chroma", "GPIB0::7::INSTR", chromaCommands);
+            await ConnectDeviceAsync(rohdeSchwarzConfig, rohdeSchwarzCommands);
+            await ConnectDeviceAsync(keithleyConfig, keithleyCommands);
+            await ConnectDeviceAsync(chromaConfig, chromaCommands);
         }
 
-        private async Task ConnectDeviceAsync(string deviceName, string connectionString, ICommands commands)
+        private async Task ConnectDeviceAsync(DeviceConfig config, ICommands commands)
         {
             Label statusLabel = new Label
             {
-                Text = $"Connecting to {deviceName}...",
+                Text = $"Connecting to {config.DeviceName}...",
                 Dock = DockStyle.Top,
                 ForeColor = Color.Red
             };
 
-            AddStatusLabelToGroupBox(deviceName, statusLabel);
+            AddStatusLabelToGroupBox(config.DeviceName, statusLabel);
 
             try
             {
-                _ConnectDrive = GlobalResourceManager.Open(connectionString) as IMessageBasedSession;
+                _ConnectDrive = GlobalResourceManager.Open(config.ConnectionString) as IMessageBasedSession;
                 _ConnectDrive.TimeoutMilliseconds = 3000;
                 _ConnectDrive.SendEndEnabled = true;
                 _ConnectDrive.TerminationCharacterEnabled = true;
@@ -59,12 +86,10 @@ namespace Chroma
                 _ConnectDrive.Write(commands.Identify() + "\n");
                 var idnResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
-                statusLabel.Text = $"Connected to {deviceName} successfully!";
+                statusLabel.Text = $"Connected to {config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
 
-                /*ShowFunctionOptions(deviceName);*/
-
-                if (deviceName == "Rohde & Schwarz")
+                if (config.DeviceName == "Rohde & Schwarz")
                 {
                     await ShowRohdeSchwarzDataAsync(commands);
                     // Create and display the "Set Parameters" button
@@ -73,14 +98,14 @@ namespace Chroma
                         Text = "Set Parameters",
                         Location = new System.Drawing.Point(10, 20)
                     };
-                    setParametersButton.Click += (s, e) => 
+                    setParametersButton.Click += (s, e) =>
                     {
                         // Add logic to set parameters here
                         MessageBox.Show("Set Parameters clicked", "Set Parameters");
                     };
                     rohdeSchwarzGroupBox.Controls.Add(setParametersButton);
                 }
-                else if (deviceName == "Keithley")
+                else if (config.DeviceName == "Keithley")
                 {
                     // Measure and display DCV immediately
                     _ConnectDrive.Write(commands.MeasureVoltage() + "\n");
@@ -108,7 +133,7 @@ namespace Chroma
                     };
                     keithleyGroupBox.Controls.Add(acvLabel);
                 }
-                else if (deviceName == "Chroma")
+                else if (config.DeviceName == "Chroma")
                 {
                     _ConnectDrive.Write(commands.MeasureVoltage() + "\n");
                     var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
