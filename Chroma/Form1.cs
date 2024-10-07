@@ -58,11 +58,54 @@ namespace Chroma
                 statusLabel.Text = $"Connected to {deviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
 
-                ShowFunctionOptions(deviceName);
+                /*ShowFunctionOptions(deviceName);*/
 
                 if (deviceName == "Rohde & Schwarz")
                 {
                     await ShowRohdeSchwarzDataAsync();
+                }
+                else if (deviceName == "Keithley")
+                {
+                    // Measure and display DCV immediately
+                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
+                    var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+
+                    Label dcvLabel = new Label
+                    {
+                        Text = "DC Voltage: " + dcvResponse,
+                        Dock = DockStyle.Top,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Blue
+                    };
+                    keithleyGroupBox.Controls.Add(dcvLabel);
+
+                    // Measure and display ACV immediately
+                    _ConnectDrive.Write(":MEAS:VOLT:AC?\n");
+                    var acvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+
+                    Label acvLabel = new Label
+                    {
+                        Text = "AC Voltage: " + acvResponse,
+                        Dock = DockStyle.Top,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Green
+                    };
+                    keithleyGroupBox.Controls.Add(acvLabel);
+                }
+                else if (deviceName == "Chroma")
+                {
+                    // Measure and display voltage immediately
+                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+
+                    Label voltageLabel = new Label
+                    {
+                        Text = "Voltage: " + voltageResponse,
+                        Dock = DockStyle.Fill,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Blue
+                    };
+                    chromaGroupBox.Controls.Add(voltageLabel);
                 }
             }
             catch (Ivi.Visa.NativeVisaException e)
