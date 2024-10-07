@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Chroma
 {
     public partial class Form1
