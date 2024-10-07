@@ -161,6 +161,8 @@ namespace Chroma
 
         private void InitializeCustomComponents()
         {
+            this.BackColor = Color.White; // Set the background color to white
+
             mainSplitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
