@@ -59,6 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ChromaCommands.cs" />
+    <Compile Include="Commands\ICommands.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\KeithleyCommands.cs" />
+    <Compile Include="Commands\RohdeSchwarzCommands.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
