@@ -1,8 +1,9 @@
 using System;
+using Chroma.Service;
 
-namespace Chroma
+namespace Chroma.Form1
 {
-    public partial class Form1
+    public partial class Main
     {
         private DeviceConfig rohdeSchwarzConfig;
         private DeviceConfig keithleyConfig;

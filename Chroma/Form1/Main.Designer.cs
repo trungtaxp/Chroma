@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace Chroma
+namespace Chroma.Form1
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// Required designer variable.
@@ -32,12 +32,12 @@ namespace Chroma
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(this.ClientSize.Width / 96F, this.ClientSize.Height / 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = Screen.PrimaryScreen.Bounds.Size;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.Text = "Main";
             this.ResumeLayout(false);
 

@@ -1,9 +1,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Chroma
+namespace Chroma.Form1
 {
-    public partial class Form1
+    public partial class Main
     {
         private SplitContainer mainSplitContainer;
         private SplitContainer secondarySplitContainer;

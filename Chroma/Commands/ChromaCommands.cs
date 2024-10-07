@@ -1,4 +1,4 @@
-namespace Chroma
+namespace Chroma.Commands
 {
     public class ChromaCommands : ICommands
     {

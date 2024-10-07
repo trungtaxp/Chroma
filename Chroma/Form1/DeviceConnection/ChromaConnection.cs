@@ -1,9 +1,11 @@
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Chroma.Commands;
+using Chroma.Service;
 using Ivi.Visa;
 
-namespace Chroma
+namespace Chroma.Form1.DeviceConnection
 {
     public class ChromaConnection
     {

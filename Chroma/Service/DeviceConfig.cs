@@ -1,4 +1,4 @@
-namespace Chroma
+namespace Chroma.Service
 {
     public class DeviceConfig
     {
