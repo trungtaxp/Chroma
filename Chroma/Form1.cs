@@ -19,6 +19,10 @@ namespace Chroma
         private GroupBox chromaGroupBox;
         private GroupBox functionGroupBox; // Define as class-level field
 
+        private ICommands rohdeSchwarzCommands = new RohdeSchwarzCommands();
+        private ICommands keithleyCommands = new KeithleyCommands();
+        private ICommands chromaCommands = new ChromaCommands();
+
         public Form1()
         {
             InitializeComponent();
@@ -29,12 +33,12 @@ namespace Chroma
 
         private async void ConnectToAllDevices()
         {
-            await ConnectDeviceAsync("Rohde & Schwarz", "TCPIP0::192.168.1.30::5200::SOCKET");
-            await ConnectDeviceAsync("Keithley", "GPIB0::16::INSTR");
-            await ConnectDeviceAsync("Chroma", "GPIB0::7::INSTR");
+            await ConnectDeviceAsync("Rohde & Schwarz", "TCPIP0::192.168.1.30::5200::SOCKET", rohdeSchwarzCommands);
+            await ConnectDeviceAsync("Keithley", "GPIB0::16::INSTR", keithleyCommands);
+            await ConnectDeviceAsync("Chroma", "GPIB0::7::INSTR", chromaCommands);
         }
 
-        private async Task ConnectDeviceAsync(string deviceName, string connectionString)
+        private async Task ConnectDeviceAsync(string deviceName, string connectionString, ICommands commands)
         {
             Label statusLabel = new Label
             {
@@ -52,7 +56,7 @@ namespace Chroma
                 _ConnectDrive.SendEndEnabled = true;
                 _ConnectDrive.TerminationCharacterEnabled = true;
                 _ConnectDrive.Clear();
-                _ConnectDrive.Write("*IDN?\n");
+                _ConnectDrive.Write(commands.Identify() + "\n");
                 var idnResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
                 statusLabel.Text = $"Connected to {deviceName} successfully!";
@@ -62,7 +66,7 @@ namespace Chroma
 
                 if (deviceName == "Rohde & Schwarz")
                 {
-                    await ShowRohdeSchwarzDataAsync();
+                    await ShowRohdeSchwarzDataAsync(commands);
                     // Create and display the "Set Parameters" button
                     Button setParametersButton = new Button
                     {
@@ -79,7 +83,7 @@ namespace Chroma
                 else if (deviceName == "Keithley")
                 {
                     // Measure and display DCV immediately
-                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
+                    _ConnectDrive.Write(commands.MeasureVoltage() + "\n");
                     var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
                     Label dcvLabel = new Label
@@ -106,8 +110,7 @@ namespace Chroma
                 }
                 else if (deviceName == "Chroma")
                 {
-                    // Measure and display voltage immediately
-                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    _ConnectDrive.Write(commands.MeasureVoltage() + "\n");
                     var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
 
                     Label voltageLabel = new Label
@@ -159,12 +162,11 @@ namespace Chroma
                     Text = "Show data",
                     Location = new System.Drawing.Point(10, 20)
                 };
-                function1Button.Click += async (s, e) => await ShowRohdeSchwarzDataAsync();
+                function1Button.Click += async (s, e) => await ShowRohdeSchwarzDataAsync(rohdeSchwarzCommands);
                 functionGroupBox.Controls.Add(function1Button);
             }
             else if (deviceName == "Keithley")
             {
-                // Add buttons for Keithley functions
                 Button function1Button = new Button
                 {
                     Text = "Show DCV",
@@ -172,7 +174,7 @@ namespace Chroma
                 };
                 function1Button.Click += async (s, e) =>
                 {
-                    _ConnectDrive.Write(":MEAS:VOLT:DC?\n");
+                    _ConnectDrive.Write(keithleyCommands.MeasureVoltage() + "\n");
                     var dcvResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
                     MessageBox.Show("DC Voltage: " + dcvResponse, "DCV Measurement");
                 };
@@ -180,7 +182,6 @@ namespace Chroma
             }
             else if (deviceName == "Chroma")
             {
-                // Add buttons for Chroma functions
                 Button function1Button = new Button
                 {
                     Text = "Show Voltage",
@@ -188,7 +189,7 @@ namespace Chroma
                 };
                 function1Button.Click += async (s, e) =>
                 {
-                    _ConnectDrive.Write("MEAS:VOLT?\n");
+                    _ConnectDrive.Write(chromaCommands.MeasureVoltage() + "\n");
                     var voltageResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
                     MessageBox.Show("Voltage: " + voltageResponse, "Voltage Measurement");
                 };
@@ -260,36 +261,43 @@ namespace Chroma
             secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2;
         }
 
-        private async Task ShowRohdeSchwarzDataAsync()
+        private async Task ShowRohdeSchwarzDataAsync(ICommands commands)
         {
             try
             {
-                _ConnectDrive.Write("FETCH:DATA?\n");
-                var dataResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
-                var dataPoints = dataResponse.Split(',').Select(double.Parse).ToArray();
-
-                Chart dataChart = new Chart
+                if (commands is RohdeSchwarzCommands rohdeSchwarzCommands)
                 {
-                    Location = new System.Drawing.Point(10, 110),
-                    Size = new System.Drawing.Size(400, 300)
-                };
-                functionGroupBox.Controls.Add(dataChart);
+                    _ConnectDrive.Write(rohdeSchwarzCommands.FetchData() + "\n");
+                    var dataResponse = await Task.Run(() => _ConnectDrive.RawIO.ReadString());
+                    var dataPoints = dataResponse.Split(',').Select(double.Parse).ToArray();
 
-                var series = new Series
-                {
-                    Name = "Data",
-                    Color = Color.Blue,
-                    ChartType = SeriesChartType.Line
-                };
+                    Chart dataChart = new Chart
+                    {
+                        Location = new System.Drawing.Point(10, 110),
+                        Size = new System.Drawing.Size(400, 300)
+                    };
+                    functionGroupBox.Controls.Add(dataChart);
 
-                dataChart.Series.Add(series);
+                    var series = new Series
+                    {
+                        Name = "Data",
+                        Color = Color.Blue,
+                        ChartType = SeriesChartType.Line
+                    };
 
-                for (int i = 0; i < dataPoints.Length; i++)
-                {
-                    series.Points.AddXY(i, dataPoints[i]);
+                    dataChart.Series.Add(series);
+
+                    for (int i = 0; i < dataPoints.Length; i++)
+                    {
+                        series.Points.AddXY(i, dataPoints[i]);
+                    }
+
+                    dataChart.Invalidate();
                 }
-
-                dataChart.Invalidate();
+                else
+                {
+                    MessageBox.Show("FetchData is not supported by this device.", "Error");
+                }
             }
             catch (Exception ex)
             {
