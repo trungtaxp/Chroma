@@ -150,8 +150,8 @@ namespace Chroma
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                /*statusLabel.Text = $"Cannot connect to {deviceName}: {e.Message}";*/
-                statusLabel.Text = $"Cannot connect to {deviceName}";
+                /*statusLabel.Text = $"Cannot connect to {config.DeviceName}: {e.Message}";*/
+                statusLabel.Text = $"Cannot connect to {config.DeviceName}";
             }
         }
 
