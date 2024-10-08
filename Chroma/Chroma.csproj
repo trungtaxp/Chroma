@@ -123,6 +123,7 @@
     <Compile Include="Commands\KeithleyCommands.cs" />
     <Compile Include="Commands\RohdeSchwarzCommands.cs" />
     <Compile Include="Form1\DeviceConnection\ChromaConnection.cs" />
+    <Compile Include="Form1\DeviceConnection\DeviceConfig.cs" />
     <Compile Include="Form1\DeviceConnection\KeithleyConnection.cs" />
     <Compile Include="Form1\DeviceConnection\RohdeSchwarzConnection.cs" />
     <Compile Include="Form1\Form1.Connection.cs">
@@ -142,7 +143,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\DeviceConfig.cs" />
     <EmbeddedResource Include="Form1\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

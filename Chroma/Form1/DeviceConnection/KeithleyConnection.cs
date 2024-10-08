@@ -2,7 +2,6 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
-using Chroma.Service;
 using Ivi.Visa;
 
 namespace Chroma.Form1.DeviceConnection
@@ -69,9 +68,10 @@ namespace Chroma.Form1.DeviceConnection
                 };
                 _groupBox.Controls.Add(acvLabel);
             }
-            catch (Ivi.Visa.NativeVisaException)
+            catch (Ivi.Visa.NativeVisaException e)
             {
-                statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                // statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
             }
         }
     }

@@ -1,9 +1,12 @@
-using System.Drawing;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
-using Chroma.Service;
 using Ivi.Visa;
+using ScottPlot;
+using ScottPlot.WinForms;
+using Color = System.Drawing.Color;
+using Label = System.Windows.Forms.Label;
 
 namespace Chroma.Form1.DeviceConnection
 {
@@ -13,12 +16,24 @@ namespace Chroma.Form1.DeviceConnection
         private DeviceConfig _config;
         private ICommands _commands;
         private GroupBox _groupBox;
+        private FormsPlot _formsPlot;
 
         public RohdeSchwarzConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {
             _config = config;
             _commands = commands;
             _groupBox = groupBox;
+            InitializePlot();
+        }
+
+        private void InitializePlot()
+        {
+            _formsPlot = new FormsPlot
+            {
+                Size = new System.Drawing.Size(_groupBox.Width / 2, _groupBox.Height / 2),
+                Location = new System.Drawing.Point(_groupBox.Width / 2, 0)
+            };
+            _groupBox.Controls.Add(_formsPlot);
         }
 
         public async Task ConnectAsync()
@@ -30,6 +45,14 @@ namespace Chroma.Form1.DeviceConnection
                 ForeColor = Color.Red
             };
             _groupBox.Controls.Add(statusLabel);
+            
+            double[] dataX = Generate.Sin(51);
+            double[] dataY = Generate.Cos(51);
+            _formsPlot.Plot.Add.Signal(dataX);
+            _formsPlot.Plot.Add.Signal(dataY);
+            _formsPlot.Plot.XLabel("Horizonal Axis");
+            _formsPlot.Plot.YLabel("Vertical Axis");
+            _formsPlot.Plot.Title("Plot Title");
 
             try
             {
@@ -44,6 +67,13 @@ namespace Chroma.Form1.DeviceConnection
 
                 statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
+
+                // Example data for the plot
+                /*double[] dataX = { 1, 2, 3, 4, 5 };
+                double[] dataY = { 1, 4, 9, 16, 25 };
+
+                _formsPlot.Plot.Add.Scatter(dataX, dataY);
+                _formsPlot.Plot.Save("demo.png", 400, 300);*/
 
                 Button setParametersButton = new Button
                 {

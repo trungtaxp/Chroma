@@ -1,4 +1,4 @@
-namespace Chroma.Service
+namespace Chroma.Form1.DeviceConnection
 {
     public class DeviceConfig
     {

@@ -1,5 +1,5 @@
 using System;
-using Chroma.Service;
+using Chroma.Form1.DeviceConnection;
 
 namespace Chroma.Form1
 {
