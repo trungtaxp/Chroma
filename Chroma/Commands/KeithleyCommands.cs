@@ -3,6 +3,7 @@ namespace Chroma.Commands
     public class KeithleyCommands : ICommands
     {
         public string MeasureVoltage() => ":MEAS:VOLT:DC?";
+        public string MeasureVoltagAc() => ":MEAS:VOLT:AC?";
         public string MeasureCurrent() => ":MEAS:CURR?";
         public string SetVoltageRange() => ":SENS:VOLT:RANG";
         public string SetCurrentRange() => ":SENS:CURR:RANG";

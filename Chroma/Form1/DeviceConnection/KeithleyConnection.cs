@@ -39,8 +39,8 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.SendEndEnabled = true;
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
-                    _connectDrive.RawIO.Write(_commands.Identify() + "\n");
                     
+                    // _connectDrive.RawIO.Write(_commands.Identify() + "\n");
                     // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                     statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
@@ -58,7 +58,7 @@ namespace Chroma.Form1.DeviceConnection
                     };
                     _groupBox.Controls.Add(dcvLabel);
 
-                    _connectDrive.RawIO.Write(":MEAS:VOLT:AC?\n");
+                    _connectDrive.RawIO.Write(new KeithleyCommands().MeasureVoltagAc()+"\n");
                     var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                     Label acvLabel = new Label
