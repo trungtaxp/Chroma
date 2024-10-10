@@ -39,8 +39,8 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.SendEndEnabled = true;
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
-                    _connectDrive.RawIO.Write(_commands.Identify() + "\n");
                     
+                    // _connectDrive.RawIO.Write(_commands.Identify() + "\n");
                     // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                     statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
