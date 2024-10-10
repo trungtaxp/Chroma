@@ -37,15 +37,14 @@ namespace Chroma.Form1.DeviceConnection
                 _connectDrive.SendEndEnabled = true;
                 _connectDrive.TerminationCharacterEnabled = true;
                 _connectDrive.Clear();
-                var formattedIO = (IMessageBasedFormattedIO)_connectDrive;
-                formattedIO.Write(_commands.Identify() + "\n");
-                var idnResponse = await Task.Run(() => formattedIO.ReadString());
+                _connectDrive.RawIO.Write(_commands.Identify() + "\n");
+                var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                 statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
 
-                formattedIO.Write(_commands.MeasureVoltage() + "\n");
-                var dcvResponse = await Task.Run(() => formattedIO.ReadString());
+                _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
+                var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                 Label dcvLabel = new Label
                 {
@@ -56,8 +55,8 @@ namespace Chroma.Form1.DeviceConnection
                 };
                 _groupBox.Controls.Add(dcvLabel);
 
-                formattedIO.Write(":MEAS:VOLT:AC?\n");
-                var acvResponse = await Task.Run(() => formattedIO.ReadString());
+                _connectDrive.RawIO.Write(":MEAS:VOLT:AC?\n");
+                var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                 Label acvLabel = new Label
                 {
@@ -70,8 +69,8 @@ namespace Chroma.Form1.DeviceConnection
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                // statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
-                MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
+                statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                // MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
             }
         }
     }

@@ -37,15 +37,14 @@ namespace Chroma.Form1.DeviceConnection
                 _connectDrive.SendEndEnabled = true;
                 _connectDrive.TerminationCharacterEnabled = true;
                 _connectDrive.Clear();
-                var formattedIO = (IMessageBasedFormattedIO)_connectDrive;
-                formattedIO.Write(_commands.Identify() + "\n");
-                var idnResponse = await Task.Run(() => formattedIO.ReadString());
+                _connectDrive.RawIO.Write(_commands.Identify() + "\n");
+                var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                 statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
 
-                formattedIO.Write(_commands.MeasureVoltage() + "\n");
-                var voltageResponse = await Task.Run(() => formattedIO.ReadString());
+                _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
+                var voltageResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
                 Label voltageLabel = new Label
                 {
