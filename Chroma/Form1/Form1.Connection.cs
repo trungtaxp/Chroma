@@ -6,9 +6,9 @@ namespace Chroma.Form1
     {
         private async void ConnectToAllDevices()
         {
-            var rohdeSchwarzConnection = new RohdeSchwarzConnection(rohdeSchwarzConfig, _rohdeSchwarzCommands, rohdeSchwarzGroupBox);
-            var keithleyConnection = new KeithleyConnection(keithleyConfig, _keithleyCommands, keithleyGroupBox);
-            var chromaConnection = new ChromaConnection(chromaConfig, _chromaCommands, chromaGroupBox);
+            var rohdeSchwarzConnection = new RohdeSchwarzConnection(_rohdeSchwarzConfig, _rohdeSchwarzCommands, _rohdeSchwarzGroupBox);
+            var keithleyConnection = new KeithleyConnection(_keithleyConfig, _keithleyCommands, _keithleyGroupBox);
+            var chromaConnection = new ChromaConnection(_chromaConfig, _chromaCommands, _chromaGroupBox);
 
             await rohdeSchwarzConnection.ConnectAsync();
             await keithleyConnection.ConnectAsync();

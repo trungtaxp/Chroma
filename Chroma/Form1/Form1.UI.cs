@@ -5,57 +5,57 @@ namespace Chroma.Form1
 {
     public partial class Main
     {
-        private SplitContainer mainSplitContainer;
-        private SplitContainer secondarySplitContainer;
-        private GroupBox rohdeSchwarzGroupBox;
-        private GroupBox keithleyGroupBox;
-        private GroupBox chromaGroupBox;
-        private GroupBox functionGroupBox;
+        private SplitContainer _mainSplitContainer;
+        private SplitContainer _secondarySplitContainer;
+        private GroupBox _rohdeSchwarzGroupBox;
+        private GroupBox _keithleyGroupBox;
+        private GroupBox _chromaGroupBox;
+        private GroupBox _functionGroupBox;
 
         private void InitializeCustomComponents()
         {
             this.BackColor = Color.White;
 
-            mainSplitContainer = new SplitContainer
+            _mainSplitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
                 SplitterDistance = (int)(this.ClientSize.Width * 4 / 6.0)
             };
-            this.Controls.Add(mainSplitContainer);
+            this.Controls.Add(_mainSplitContainer);
 
-            secondarySplitContainer = new SplitContainer
+            _secondarySplitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Horizontal,
-                SplitterDistance = mainSplitContainer.ClientSize.Height / 2
+                SplitterDistance = _mainSplitContainer.ClientSize.Height / 2
             };
-            mainSplitContainer.Panel2.Controls.Add(secondarySplitContainer);
+            _mainSplitContainer.Panel2.Controls.Add(_secondarySplitContainer);
 
-            rohdeSchwarzGroupBox = new GroupBox
+            _rohdeSchwarzGroupBox = new GroupBox
             {
                 Text = "Rohde & Schwarz",
                 Dock = DockStyle.Fill
             };
-            mainSplitContainer.Panel1.Controls.Add(rohdeSchwarzGroupBox);
+            _mainSplitContainer.Panel1.Controls.Add(_rohdeSchwarzGroupBox);
 
-            keithleyGroupBox = new GroupBox
+            _keithleyGroupBox = new GroupBox
             {
                 Text = "Keithley",
                 Dock = DockStyle.Fill
             };
-            secondarySplitContainer.Panel1.Controls.Add(keithleyGroupBox);
+            _secondarySplitContainer.Panel1.Controls.Add(_keithleyGroupBox);
 
-            chromaGroupBox = new GroupBox
+            _chromaGroupBox = new GroupBox
             {
                 Text = "Chroma",
                 Dock = DockStyle.Fill
             };
-            secondarySplitContainer.Panel2.Controls.Add(chromaGroupBox);
+            _secondarySplitContainer.Panel2.Controls.Add(_chromaGroupBox);
 
-            functionGroupBox = new GroupBox(); // Initialize functionGroupBox
+            _functionGroupBox = new GroupBox(); // Initialize functionGroupBox
 
-            secondarySplitContainer.SplitterDistance = secondarySplitContainer.ClientSize.Height / 2;
+            _secondarySplitContainer.SplitterDistance = _secondarySplitContainer.ClientSize.Height / 2;
         }
 
         private void SetFullScreen()

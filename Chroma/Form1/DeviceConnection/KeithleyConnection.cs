@@ -33,39 +33,43 @@ namespace Chroma.Form1.DeviceConnection
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
-                _connectDrive.TimeoutMilliseconds = 3000;
-                _connectDrive.SendEndEnabled = true;
-                _connectDrive.TerminationCharacterEnabled = true;
-                _connectDrive.Clear();
-                _connectDrive.RawIO.Write(_commands.Identify() + "\n");
-                var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
-                statusLabel.ForeColor = Color.Green;
-
-                _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
-                var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                Label dcvLabel = new Label
+                if (_connectDrive != null)
                 {
-                    Text = "DC Voltage: " + dcvResponse,
-                    Dock = DockStyle.Top,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    ForeColor = Color.Blue
-                };
-                _groupBox.Controls.Add(dcvLabel);
+                    _connectDrive.TimeoutMilliseconds = 3000;
+                    _connectDrive.SendEndEnabled = true;
+                    _connectDrive.TerminationCharacterEnabled = true;
+                    _connectDrive.Clear();
+                    _connectDrive.RawIO.Write(_commands.Identify() + "\n");
+                    
+                    // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
-                _connectDrive.RawIO.Write(":MEAS:VOLT:AC?\n");
-                var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+                    statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
+                    statusLabel.ForeColor = Color.Green;
 
-                Label acvLabel = new Label
-                {
-                    Text = "AC Voltage: " + acvResponse,
-                    Dock = DockStyle.Top,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    ForeColor = Color.Green
-                };
-                _groupBox.Controls.Add(acvLabel);
+                    _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
+                    var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                    Label dcvLabel = new Label
+                    {
+                        Text = "DC Voltage: " + dcvResponse,
+                        Dock = DockStyle.Top,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Blue
+                    };
+                    _groupBox.Controls.Add(dcvLabel);
+
+                    _connectDrive.RawIO.Write(":MEAS:VOLT:AC?\n");
+                    var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                    Label acvLabel = new Label
+                    {
+                        Text = "AC Voltage: " + acvResponse,
+                        Dock = DockStyle.Top,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Green
+                    };
+                    _groupBox.Controls.Add(acvLabel);
+                }
             }
             catch (Ivi.Visa.NativeVisaException e)
             {

@@ -9,9 +9,9 @@ namespace Chroma.Form1.DeviceConnection
     public class ChromaConnection
     {
         private IMessageBasedSession _connectDrive;
-        private DeviceConfig _config;
-        private ICommands _commands;
-        private GroupBox _groupBox;
+        private readonly DeviceConfig _config;
+        private readonly ICommands _commands;
+        private readonly GroupBox _groupBox;
 
         public ChromaConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {
@@ -33,27 +33,31 @@ namespace Chroma.Form1.DeviceConnection
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
-                _connectDrive.TimeoutMilliseconds = 3000;
-                _connectDrive.SendEndEnabled = true;
-                _connectDrive.TerminationCharacterEnabled = true;
-                _connectDrive.Clear();
-                _connectDrive.RawIO.Write(_commands.Identify() + "\n");
-                var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
-                statusLabel.ForeColor = Color.Green;
-
-                _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
-                var voltageResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                Label voltageLabel = new Label
+                if (_connectDrive != null)
                 {
-                    Text = "Voltage: " + voltageResponse,
-                    Dock = DockStyle.Fill,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    ForeColor = Color.Blue
-                };
-                _groupBox.Controls.Add(voltageLabel);
+                    _connectDrive.TimeoutMilliseconds = 3000;
+                    _connectDrive.SendEndEnabled = true;
+                    _connectDrive.TerminationCharacterEnabled = true;
+                    _connectDrive.Clear();
+                    _connectDrive.RawIO.Write(_commands.Identify() + "\n");
+                    
+                    // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                    statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
+                    statusLabel.ForeColor = Color.Green;
+
+                    _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
+                    var voltageResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                    Label voltageLabel = new Label
+                    {
+                        Text = "Voltage: " + voltageResponse,
+                        Dock = DockStyle.Fill,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        ForeColor = Color.Blue
+                    };
+                    _groupBox.Controls.Add(voltageLabel);
+                }
             }
             catch (Ivi.Visa.NativeVisaException)
             {

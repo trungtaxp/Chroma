@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
@@ -57,12 +56,15 @@ namespace Chroma.Form1.DeviceConnection
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
-                _connectDrive.TimeoutMilliseconds = 3000;
-                _connectDrive.SendEndEnabled = true;
-                _connectDrive.TerminationCharacterEnabled = true;
-                _connectDrive.Clear();
-                _connectDrive.RawIO.Write(_commands.Identify() + "\n");
-                var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+                if (_connectDrive != null)
+                {
+                    _connectDrive.TimeoutMilliseconds = 3000;
+                    _connectDrive.SendEndEnabled = true;
+                    _connectDrive.TerminationCharacterEnabled = true;
+                    _connectDrive.Clear();
+                    _connectDrive.RawIO.Write(_commands.Identify() + "\n");
+                    // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+                }
 
                 statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
