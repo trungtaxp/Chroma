@@ -12,6 +12,7 @@ namespace Chroma.Form1.DeviceConnection
         private readonly DeviceConfig _config;
         private readonly ICommands _commands;
         private readonly GroupBox _groupBox;
+        public bool IsConnected { get; private set; }
 
         public ChromaConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {
@@ -45,6 +46,7 @@ namespace Chroma.Form1.DeviceConnection
 
                     statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                     statusLabel.ForeColor = Color.Green;
+                    IsConnected = true;
 
                     _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
                     var voltageResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
@@ -62,6 +64,7 @@ namespace Chroma.Form1.DeviceConnection
             catch (Ivi.Visa.NativeVisaException)
             {
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                IsConnected = false;
             }
         }
     }

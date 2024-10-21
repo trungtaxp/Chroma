@@ -16,6 +16,7 @@ namespace Chroma.Form1.DeviceConnection
         private ICommands _commands;
         private GroupBox _groupBox;
         private FormsPlot _formsPlot;
+        public bool IsConnected { get; private set; }
 
         public RohdeSchwarzConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {
@@ -69,6 +70,7 @@ namespace Chroma.Form1.DeviceConnection
 
                 statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                 statusLabel.ForeColor = Color.Green;
+                IsConnected = true;
 
                 // Example data for the plot
                 /*double[] dataX = { 1, 2, 3, 4, 5 };
@@ -91,6 +93,7 @@ namespace Chroma.Form1.DeviceConnection
             catch (Ivi.Visa.NativeVisaException)
             {
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                IsConnected = false;
             }
         }
     }

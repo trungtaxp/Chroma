@@ -12,6 +12,7 @@ namespace Chroma.Form1.DeviceConnection
         private DeviceConfig _config;
         private ICommands _commands;
         private GroupBox _groupBox;
+        public bool IsConnected { get; private set; }
 
         public KeithleyConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {
@@ -45,6 +46,8 @@ namespace Chroma.Form1.DeviceConnection
 
                     statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
                     statusLabel.ForeColor = Color.Green;
+                    
+                    IsConnected = true;
 
                     _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
                     var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
@@ -74,6 +77,7 @@ namespace Chroma.Form1.DeviceConnection
             catch (Ivi.Visa.NativeVisaException e)
             {
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                IsConnected = false;
                 // MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
             }
         }
