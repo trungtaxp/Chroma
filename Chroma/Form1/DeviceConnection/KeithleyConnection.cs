@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
@@ -24,7 +25,6 @@ namespace Chroma.Form1.DeviceConnection
         {
             Label statusLabel = new Label
             {
-                Text = $"Connecting to {_config.DeviceName}...",
                 Dock = DockStyle.Top,
                 ForeColor = Color.Red
             };
@@ -40,42 +40,85 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
                     
-                    // _connectDrive.RawIO.Write(_commands.Identify() + "\n");
-                    // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                    statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
-                    statusLabel.ForeColor = Color.Green;
-
-                    _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
-                    var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                    Label dcvLabel = new Label
+                    Button dcvButton = new Button
                     {
-                        Text = "DC Voltage: " + dcvResponse,
+                        Text = "Show DC Voltage",
                         Dock = DockStyle.Top,
                         TextAlign = ContentAlignment.MiddleCenter,
                         ForeColor = Color.Blue
                     };
-                    _groupBox.Controls.Add(dcvLabel);
-
-                    _connectDrive.RawIO.Write(new KeithleyCommands().MeasureVoltagAc()+"\n");
-                    var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                    Label acvLabel = new Label
+                    
+                    dcvButton.Click += async (sender, e) =>
                     {
-                        Text = "AC Voltage: " + acvResponse,
+                        _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
+                        var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                        var dcvDataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
+                        if (dcvDataGridView == null)
+                        {
+                            dcvDataGridView = new DataGridView
+                            {
+                                Dock = DockStyle.Bottom,
+                                ReadOnly = true,
+                                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                                ColumnCount = 4
+                            };
+                            dcvDataGridView.Columns[0].Name = "NVDC";
+                            dcvDataGridView.Columns[1].Name = "SECS";
+                            dcvDataGridView.Columns[2].Name = "RDNG#";
+                            dcvDataGridView.Columns[3].Name = "EXTCHAN";
+                            _groupBox.Controls.Add(dcvDataGridView);
+                        }
+
+                        var values = FormatResponse(dcvResponse).Split(',');
+                        dcvDataGridView.Rows.Add(values);
+                    };
+                    _groupBox.Controls.Add(dcvButton);
+                    
+                    Button acvButton = new Button
+                    {
+                        Text = "Show AC Voltage",
                         Dock = DockStyle.Top,
                         TextAlign = ContentAlignment.MiddleCenter,
                         ForeColor = Color.Green
                     };
-                    _groupBox.Controls.Add(acvLabel);
+                    acvButton.Click += async (sender, e) =>
+                    {
+                        _connectDrive.RawIO.Write(new KeithleyCommands().MeasureVoltagAc() + "\n");
+                        var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+
+                        var acvDataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
+                        if (acvDataGridView == null)
+                        {
+                            acvDataGridView = new DataGridView
+                            {
+                                Dock = DockStyle.Bottom,
+                                ReadOnly = true,
+                                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                                ColumnCount = 4
+                            };
+                            acvDataGridView.Columns[0].Name = "NVAC";
+                            acvDataGridView.Columns[1].Name = "SECS";
+                            acvDataGridView.Columns[2].Name = "RDNG#";
+                            acvDataGridView.Columns[3].Name = "EXTCHAN";
+                            _groupBox.Controls.Add(acvDataGridView);
+                        }
+
+                        var values = FormatResponse(acvResponse).Split(',');
+                        acvDataGridView.Rows.Add(values);
+                    };
+                    _groupBox.Controls.Add(acvButton);
                 }
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
-                // MessageBox.Show("Cannot connect with the selected device:\n" + e.Message, "Error");
             }
+        }
+        private string FormatResponse(string response)
+        {
+            var values = response.Split(',');
+            return $"{values[0]}, {values[1]}, {values[2]}, {values[3]}";
         }
     }
 }
