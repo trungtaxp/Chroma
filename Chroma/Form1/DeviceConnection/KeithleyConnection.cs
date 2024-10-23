@@ -10,9 +10,9 @@ namespace Chroma.Form1.DeviceConnection
     public class KeithleyConnection
     {
         private IMessageBasedSession _connectDrive;
-        private DeviceConfig _config;
-        private ICommands _commands;
-        private GroupBox _groupBox;
+        private readonly DeviceConfig _config;
+        private readonly ICommands _commands;
+        private readonly GroupBox _groupBox;
 
         public KeithleyConnection(DeviceConfig config, ICommands commands, GroupBox groupBox)
         {

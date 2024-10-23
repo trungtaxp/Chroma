@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
@@ -24,7 +25,6 @@ namespace Chroma.Form1.DeviceConnection
         {
             Label statusLabel = new Label
             {
-                Text = $"Connecting to {_config.DeviceName}...",
                 Dock = DockStyle.Top,
                 ForeColor = Color.Red
             };
@@ -39,30 +39,59 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.SendEndEnabled = true;
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
-                    
-                    // _connectDrive.RawIO.Write(_commands.Identify() + "\n");
-                    // var idnResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
 
-                    statusLabel.Text = $"Connected to {_config.DeviceName} successfully!";
-                    statusLabel.ForeColor = Color.Green;
-
-                    _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
-                    var voltageResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                    Label voltageLabel = new Label
+                    // table to display the data
+                    var DataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
+                    if (DataGridView == null)
                     {
-                        Text = "Voltage: " + voltageResponse,
-                        Dock = DockStyle.Fill,
+                        DataGridView = new DataGridView
+                        {
+                            Dock = DockStyle.Fill,
+                            ReadOnly = true,
+                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                            BackgroundColor = Color.White,
+                            ColumnCount = 1,
+                            RowHeadersVisible = false
+                            // GridColor = Color.Gray
+                            // Margin = new Padding(30)
+                        };
+                        DataGridView.Columns[0].Name = "NVDC";/*
+                        DataGridView.Columns[1].Name = "SECS";
+                        DataGridView.Columns[2].Name = "RDNG";
+                        DataGridView.Columns[3].Name = "EXTCHAN";*/
+                        _groupBox.Controls.Add(DataGridView);
+                    }
+
+                    Button dcvButton = new Button
+                    {
+                        Text = "Show Voltage",
+                        Dock = DockStyle.Top,
                         TextAlign = ContentAlignment.MiddleCenter,
                         ForeColor = Color.Blue
                     };
-                    _groupBox.Controls.Add(voltageLabel);
+
+                    dcvButton.Click += async (sender, e) =>
+                    {
+                        _connectDrive.RawIO.Write(new ChromaCommands().MeasureVoltage() + "\n");
+                        var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
+                        DataGridView.Rows.Add(dcvResponse);
+                        // MessageBox.Show("Data:\n" + dcvResponse, "Show Voltage");
+                        /*var values = FormatResponse(dcvResponse).Split(',');
+                        DataGridView.Rows.Add(values);*/
+                    };
+                    _groupBox.Controls.Add(dcvButton);
                 }
             }
-            catch (Ivi.Visa.NativeVisaException)
+            catch (Ivi.Visa.NativeVisaException e)
             {
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
             }
+        }
+
+        private string FormatResponse(string response)
+        {
+            var values = response.Split(',');
+            return $"{values[0]}, {values[1]}, {values[2]}, {values[3]}";
         }
     }
 }
