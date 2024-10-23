@@ -40,6 +40,28 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
                     
+                    // table to display the data
+                    var DataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
+                    if (DataGridView == null)
+                    {
+                        DataGridView = new DataGridView
+                        {
+                            Dock = DockStyle.Fill,
+                            ReadOnly = true,
+                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                            BackgroundColor = Color.White,
+                            ColumnCount = 4,
+                            RowHeadersVisible = false
+                            // GridColor = Color.Gray
+                            // Margin = new Padding(30)
+                        };
+                        DataGridView.Columns[0].Name = "NVDC";
+                        DataGridView.Columns[1].Name = "SECS";
+                        DataGridView.Columns[2].Name = "RDNG";
+                        DataGridView.Columns[3].Name = "EXTCHAN";
+                        _groupBox.Controls.Add(DataGridView);
+                    }
+                    
                     Button dcvButton = new Button
                     {
                         Text = "Show DC Voltage",
@@ -52,26 +74,8 @@ namespace Chroma.Form1.DeviceConnection
                     {
                         _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
                         var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                        var dcvDataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
-                        if (dcvDataGridView == null)
-                        {
-                            dcvDataGridView = new DataGridView
-                            {
-                                Dock = DockStyle.Bottom,
-                                ReadOnly = true,
-                                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                                ColumnCount = 4
-                            };
-                            dcvDataGridView.Columns[0].Name = "NVDC";
-                            dcvDataGridView.Columns[1].Name = "SECS";
-                            dcvDataGridView.Columns[2].Name = "RDNG#";
-                            dcvDataGridView.Columns[3].Name = "EXTCHAN";
-                            _groupBox.Controls.Add(dcvDataGridView);
-                        }
-
                         var values = FormatResponse(dcvResponse).Split(',');
-                        dcvDataGridView.Rows.Add(values);
+                        DataGridView.Rows.Add(values);
                     };
                     _groupBox.Controls.Add(dcvButton);
                     
@@ -86,26 +90,8 @@ namespace Chroma.Form1.DeviceConnection
                     {
                         _connectDrive.RawIO.Write(new KeithleyCommands().MeasureVoltagAc() + "\n");
                         var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-
-                        var acvDataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
-                        if (acvDataGridView == null)
-                        {
-                            acvDataGridView = new DataGridView
-                            {
-                                Dock = DockStyle.Bottom,
-                                ReadOnly = true,
-                                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                                ColumnCount = 4
-                            };
-                            acvDataGridView.Columns[0].Name = "NVAC";
-                            acvDataGridView.Columns[1].Name = "SECS";
-                            acvDataGridView.Columns[2].Name = "RDNG#";
-                            acvDataGridView.Columns[3].Name = "EXTCHAN";
-                            _groupBox.Controls.Add(acvDataGridView);
-                        }
-
                         var values = FormatResponse(acvResponse).Split(',');
-                        acvDataGridView.Rows.Add(values);
+                        DataGridView.Rows.Add(values);
                     };
                     _groupBox.Controls.Add(acvButton);
                 }
