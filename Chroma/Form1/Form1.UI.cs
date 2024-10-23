@@ -20,7 +20,8 @@ namespace Chroma.Form1
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = (int)(this.ClientSize.Width * 4 / 6.0)
+                SplitterDistance = (int)(this.ClientSize.Width * 4 / 6.0),
+                IsSplitterFixed = true // Prevent moving the splitter
             };
             this.Controls.Add(_mainSplitContainer);
 
@@ -28,7 +29,8 @@ namespace Chroma.Form1
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Horizontal,
-                SplitterDistance = _mainSplitContainer.ClientSize.Height / 2
+                SplitterDistance = _mainSplitContainer.ClientSize.Height / 2,
+                IsSplitterFixed = true // Prevent moving the splitter
             };
             _mainSplitContainer.Panel2.Controls.Add(_secondarySplitContainer);
 
