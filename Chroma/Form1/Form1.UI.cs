@@ -26,7 +26,7 @@ namespace Chroma.Form1
 
             // Create Edit menu
             var editMenu = new ToolStripMenuItem("Options");
-            editMenu.DropDownItems.Add("Settings", null, (s, e) => {ShowSettingsDialog(); });
+            editMenu.DropDownItems.Add("Settings", null, (s, e) => { ShowSettingsDialog(); });
 
             // Create View menu
             var viewMenu = new ToolStripMenuItem("View");
@@ -47,8 +47,10 @@ namespace Chroma.Form1
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = (int)(this.ClientSize.Width * 4 / 6.0),
-                IsSplitterFixed = true // Prevent moving the splitter
+                SplitterDistance = (int)(this.ClientSize.Width * 4.0 / 6.0),
+                IsSplitterFixed = true, // Prevent moving the splitter
+                SplitterWidth = 15, // Set splitter width to 15
+                BackColor = Color.White // Match the background color of the form
             };
             this.Controls.Add(_mainSplitContainer);
             this.Controls.SetChildIndex(menuStrip, 15); // Ensure MenuStrip is on top
@@ -58,7 +60,9 @@ namespace Chroma.Form1
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Horizontal,
                 SplitterDistance = _mainSplitContainer.ClientSize.Height / 2,
-                IsSplitterFixed = true // Prevent moving the splitter
+                IsSplitterFixed = true, // Prevent moving the splitter
+                SplitterWidth = 10, // Set splitter width to 10
+                BackColor = Color.White // Match the background color of the form
             };
             _mainSplitContainer.Panel2.Controls.Add(_secondarySplitContainer);
 
