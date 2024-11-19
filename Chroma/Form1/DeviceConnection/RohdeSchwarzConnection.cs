@@ -31,12 +31,7 @@ namespace Chroma.Form1.DeviceConnection
                 ForeColor = Color.Red
             };
             _groupBox.Controls.Add(statusLabel);
-            // Add ChromiumWebBrowser control to display the web remote control
-            var browser = new ChromiumWebBrowser("https://namdaiphong.vn/") // Replace with the actual URL of the web remote control
-            {
-                Dock = DockStyle.Fill
-            };
-            _groupBox.Controls.Add(browser);
+
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
@@ -47,17 +42,17 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
 
-                    /*// Add ChromiumWebBrowser control to display the web remote control
-                    var browser = new ChromiumWebBrowser("http://192.168.1.30") // Replace with the actual URL of the web remote control
+                    // Add ChromiumWebBrowser control to display the iframe with the web remote control
+                    var browser = new ChromiumWebBrowser("data:text/html,<iframe src='http://192.168.1.30' width='100%' height='100%' frameborder='0'></iframe>") // Replace with the actual URL of the web remote control
                     {
                         Dock = DockStyle.Fill
                     };
-                    _groupBox.Controls.Add(browser);*/
+                    _groupBox.Controls.Add(browser);
                 }
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                // statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
             }
         }
     }
