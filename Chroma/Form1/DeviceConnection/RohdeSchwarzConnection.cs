@@ -1,9 +1,11 @@
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
 using Ivi.Visa;
+using CefSharp.WinForms;
 
 namespace Chroma.Form1.DeviceConnection
 {
@@ -29,7 +31,12 @@ namespace Chroma.Form1.DeviceConnection
                 ForeColor = Color.Red
             };
             _groupBox.Controls.Add(statusLabel);
-
+            // Add ChromiumWebBrowser control to display the web remote control
+            var browser = new ChromiumWebBrowser("https://namdaiphong.vn/") // Replace with the actual URL of the web remote control
+            {
+                Dock = DockStyle.Fill
+            };
+            _groupBox.Controls.Add(browser);
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
@@ -40,58 +47,18 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
 
-                    // table to display the data
-                    var DataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
-                    if (DataGridView == null)
+                    /*// Add ChromiumWebBrowser control to display the web remote control
+                    var browser = new ChromiumWebBrowser("http://192.168.1.30") // Replace with the actual URL of the web remote control
                     {
-                        DataGridView = new DataGridView
-                        {
-                            Dock = DockStyle.Fill,
-                            ReadOnly = true,
-                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                            BackgroundColor = Color.White,
-                            ColumnCount = 1,
-                            RowHeadersVisible = false
-                            // GridColor = Color.Gray
-                            // Margin = new Padding(30)
-                        };
-                        DataGridView.Columns[0].Name = "NVDC";/*
-                        DataGridView.Columns[1].Name = "SECS";
-                        DataGridView.Columns[2].Name = "RDNG";
-                        DataGridView.Columns[3].Name = "EXTCHAN";*/
-                        _groupBox.Controls.Add(DataGridView);
-                    }
-
-                    Button dcvButton = new Button
-                    {
-                        Text = "Show Voltage",
-                        Dock = DockStyle.Top,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        ForeColor = Color.Blue
+                        Dock = DockStyle.Fill
                     };
-
-                    dcvButton.Click += async (sender, e) =>
-                    {
-                        _connectDrive.RawIO.Write(new ChromaCommands().MeasureVoltage() + "\n");
-                        var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-                        DataGridView.Rows.Add(dcvResponse);
-                        // MessageBox.Show("Data:\n" + dcvResponse, "Show Voltage");
-                        /*var values = FormatResponse(dcvResponse).Split(',');
-                        DataGridView.Rows.Add(values);*/
-                    };
-                    _groupBox.Controls.Add(dcvButton);
+                    _groupBox.Controls.Add(browser);*/
                 }
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
-                statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
+                // statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
             }
-        }
-
-        private string FormatResponse(string response)
-        {
-            var values = response.Split(',');
-            return $"{values[0]}, {values[1]}, {values[2]}, {values[3]}";
         }
     }
 }
