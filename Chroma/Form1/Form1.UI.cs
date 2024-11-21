@@ -69,21 +69,24 @@ namespace Chroma.Form1
             _rohdeSchwarzGroupBox = new GroupBox
             {
                 Text = "Rohde & Schwarz",
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                Font = new Font("Arial", 10, FontStyle.Bold),
             };
             _mainSplitContainer.Panel1.Controls.Add(_rohdeSchwarzGroupBox);
 
             _keithleyGroupBox = new GroupBox
             {
                 Text = "Keithley",
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                Font = new Font("Arial", 10, FontStyle.Bold),
             };
             _secondarySplitContainer.Panel1.Controls.Add(_keithleyGroupBox);
 
             _chromaGroupBox = new GroupBox
             {
                 Text = "Chroma",
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                Font = new Font("Arial", 10, FontStyle.Bold),
             };
             _secondarySplitContainer.Panel2.Controls.Add(_chromaGroupBox);
 

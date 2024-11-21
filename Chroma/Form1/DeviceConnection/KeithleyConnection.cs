@@ -25,7 +25,7 @@ namespace Chroma.Form1.DeviceConnection
         {
             Label statusLabel = new Label
             {
-                Dock = DockStyle.Top,
+                Dock = DockStyle.Fill,
                 ForeColor = Color.Red
             };
             _groupBox.Controls.Add(statusLabel);
