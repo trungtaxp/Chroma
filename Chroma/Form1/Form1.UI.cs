@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using Chroma.Helper;
 
 namespace Chroma.Form1
 {
@@ -103,22 +104,9 @@ namespace Chroma.Form1
 
         private void ShowSettingsDialog()
         {
-            _controlComboBox = new ComboBox
-            {
-                Name = "Setting Device",
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Dock = DockStyle.Top,
-                Location = new Point(10, 10) // Adjust the location as needed
-            };
-
-            var comboBoxForm = new Form
-            {
-                Text = "Setting",
-                Size = new Size(855, 550)
-            };
-
-            comboBoxForm.Controls.Add(_controlComboBox);
-            comboBoxForm.ShowDialog();
+            var settingsForm = new Setting();
+            settingsForm.ShowDialog();
+            
         }
         
     }
