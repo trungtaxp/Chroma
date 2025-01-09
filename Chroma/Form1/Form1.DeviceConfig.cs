@@ -14,7 +14,7 @@ namespace Chroma.Form1
             _rohdeSchwarzConfig = new DeviceConfig
             {
                 DeviceName = Environment.GetEnvironmentVariable("ROHDE_SCHWARZ_NAME") ?? "Rohde & Schwarz",
-                ConnectionString = Environment.GetEnvironmentVariable("ROHDE_SCHWARZ_CONN") ?? "TCPIP0::192.168.1.30::5200::SOCKET"
+                ConnectionString = Environment.GetEnvironmentVariable("ROHDE_SCHWARZ_CONN") ?? "TCPIP0::169.168.1.16::5025::SOCKET"
             };
 
             _keithleyConfig = new DeviceConfig

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Chroma.Commands;
 using Ivi.Visa;
 using CefSharp.WinForms;
+using Microsoft.Web.WebView2.WinForms;
 
 namespace Chroma.Form1.DeviceConnection
 {
@@ -31,9 +32,16 @@ namespace Chroma.Form1.DeviceConnection
                 ForeColor = Color.Red
             };
             _groupBox.Controls.Add(statusLabel);
-
+            
+            // Add ChromiumWebBrowser control to display the web remote control
+            var browser = new ChromiumWebBrowser("https://namdaiphong.vn/") // Replace with the actual URL of the web remote control
+            {
+                Dock = DockStyle.Fill
+            };
+            _groupBox.Controls.Add(browser);
             try
             {
+                
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
                 if (_connectDrive != null)
                 {
@@ -42,12 +50,15 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
 
-                    // Add ChromiumWebBrowser control to display the iframe with the web remote control
-                    var browser = new ChromiumWebBrowser("data:text/html,<iframe src='http://192.168.1.30' width='100%' height='100%' frameborder='0'></iframe>") // Replace with the actual URL of the web remote control
+                    // Add WebView2 control to display the iframe with the web remote control
+                    /*var webView = new WebView2
                     {
                         Dock = DockStyle.Fill
                     };
-                    _groupBox.Controls.Add(browser);
+                    await webView.EnsureCoreWebView2Async(null);
+                    webView.CoreWebView2.Navigate("http://169.168.1.16/instrumentctrl/vnc/vnc_control.php?mID=7"); // Replace with the actual URL of the web remote control
+                    _groupBox.Controls.Add(webView);*/
+                    
                 }
             }
             catch (Ivi.Visa.NativeVisaException e)
