@@ -153,11 +153,11 @@
     <Compile Include="Form1\Form1.UI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Helper\Setting.cs">
+    <Compile Include="Helper\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Helper\Setting.Designer.cs">
-      <DependentUpon>Setting.cs</DependentUpon>
+    <Compile Include="Helper\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -26,18 +26,12 @@ namespace Chroma.Form1
             fileMenu.DropDownItems.Add("Exit", null, (s, e) => { this.Close(); });
 
             // Create Edit menu
-            var editMenu = new ToolStripMenuItem("Options");
-            editMenu.DropDownItems.Add("Settings", null, (s, e) => { ShowSettingsDialog(); });
+            var aboutMenu = new ToolStripMenuItem("About", null, (s, e) => { ShowAboutDialog(); });
 
-            // Create View menu
-            var viewMenu = new ToolStripMenuItem("View");
-            viewMenu.DropDownItems.Add("Zoom In", null, (s, e) => { /* Zoom In action */ });
-            viewMenu.DropDownItems.Add("Zoom Out", null, (s, e) => { /* Zoom Out action */ });
-
+          
             // Add menus to MenuStrip
             menuStrip.Items.Add(fileMenu);
-            menuStrip.Items.Add(editMenu);
-            menuStrip.Items.Add(viewMenu);
+            menuStrip.Items.Add(aboutMenu);
 
             // Add MenuStrip to the form
             this.MainMenuStrip = menuStrip;
@@ -102,11 +96,10 @@ namespace Chroma.Form1
             this.WindowState = FormWindowState.Maximized;
         }
 
-        private void ShowSettingsDialog()
+        private void ShowAboutDialog()
         {
-            var settingsForm = new Setting();
-            settingsForm.ShowDialog();
-            
+            var aboutForm = new AboutForm();
+            aboutForm.ShowDialog();
         }
         
     }
