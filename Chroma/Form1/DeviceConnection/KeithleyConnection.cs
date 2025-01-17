@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chroma.Commands;
 using Ivi.Visa;
+using ScottPlot.Colormaps;
 
 namespace Chroma.Form1.DeviceConnection
 {
@@ -32,7 +33,7 @@ namespace Chroma.Form1.DeviceConnection
                     _connectDrive.SendEndEnabled = true;
                     _connectDrive.TerminationCharacterEnabled = true;
                     _connectDrive.Clear();
-                    
+
                     // table to display the data
                     var DataGridView = _groupBox.Controls.OfType<DataGridView>().FirstOrDefault();
                     if (DataGridView == null)
@@ -43,18 +44,13 @@ namespace Chroma.Form1.DeviceConnection
                             ReadOnly = true,
                             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                             BackgroundColor = Color.White,
-                            ColumnCount = 4,
-                            RowHeadersVisible = false
-                            // GridColor = Color.Gray
-                            // Margin = new Padding(30)
+                            ColumnCount = 1,
+                            RowHeadersVisible = false,
                         };
-                        DataGridView.Columns[0].Name = "NVDC";
-                        DataGridView.Columns[1].Name = "SECS";
-                        DataGridView.Columns[2].Name = "RDNG";
-                        DataGridView.Columns[3].Name = "EXTCHAN";
+                        DataGridView.Columns[0].Name = "Voltage";
                         _groupBox.Controls.Add(DataGridView);
                     }
-                    
+
                     Button dcvButton = new Button
                     {
                         Text = "Show DC Voltage",
@@ -62,16 +58,16 @@ namespace Chroma.Form1.DeviceConnection
                         TextAlign = ContentAlignment.MiddleCenter,
                         ForeColor = Color.Blue
                     };
-                    
+
                     dcvButton.Click += async (sender, e) =>
                     {
                         _connectDrive.RawIO.Write(_commands.MeasureVoltage() + "\n");
                         var dcvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-                        var values = FormatResponse(dcvResponse).Split(',');
-                        DataGridView.Rows.Add(values);
+                        var value = FormatResponse(dcvResponse, false);
+                        DataGridView.Rows.Add(value);
                     };
                     _groupBox.Controls.Add(dcvButton);
-                    
+
                     Button acvButton = new Button
                     {
                         Text = "Show AC Voltage",
@@ -83,8 +79,8 @@ namespace Chroma.Form1.DeviceConnection
                     {
                         _connectDrive.RawIO.Write(new KeithleyCommands().MeasureVoltagAc() + "\n");
                         var acvResponse = await Task.Run(() => _connectDrive.RawIO.ReadString());
-                        var values = FormatResponse(acvResponse).Split(',');
-                        DataGridView.Rows.Add(values);
+                        var value = FormatResponse(acvResponse, true);
+                        DataGridView.Rows.Add(value);
                     };
                     _groupBox.Controls.Add(acvButton);
                 }
@@ -100,10 +96,13 @@ namespace Chroma.Form1.DeviceConnection
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
             }
         }
-        private string FormatResponse(string response)
+        private string FormatResponse(string response, bool isAC = false)
         {
             var values = response.Split(',');
-            return $"{values[0]}, {values[1]}, {values[2]}, {values[3]}";
+            var voltageValue = values[0].Split('E')[0];
+            var unit = isAC ? "mAVC" : "mVDC";
+
+            return $"{voltageValue} {unit}";
         }
     }
 }
