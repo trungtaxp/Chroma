@@ -161,14 +161,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1\Form1.UI.resx">
-      <DependentUpon>Form1.UI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Helper\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

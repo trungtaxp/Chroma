@@ -102,18 +102,5 @@ namespace Chroma.Form1
             aboutForm.ShowDialog();
         }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // Main
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "Main";
-            this.ShowIcon = false;
-            this.Text = "VOLTAGE CONTROLLER TEST";
-            this.ResumeLayout(false);
-
-        }
     }
 }
