@@ -63,7 +63,7 @@ namespace Chroma.Form1
 
             _rohdeSchwarzGroupBox = new GroupBox
             {
-                Text = "Rohde & Schwarz",
+                Text = "Oscilloscope",
                 Dock = DockStyle.Fill,
                 Font = new Font("Arial", 10, FontStyle.Bold),
             };
@@ -71,7 +71,7 @@ namespace Chroma.Form1
 
             _keithleyGroupBox = new GroupBox
             {
-                Text = "Keithley",
+                Text = "Multimeter",
                 Dock = DockStyle.Fill,
                 Font = new Font("Arial", 10, FontStyle.Bold),
             };
@@ -79,7 +79,7 @@ namespace Chroma.Form1
 
             _chromaGroupBox = new GroupBox
             {
-                Text = "Chroma",
+                Text = "E-load",
                 Dock = DockStyle.Fill,
                 Font = new Font("Arial", 10, FontStyle.Bold),
             };
