@@ -45,17 +45,19 @@ namespace Chroma.Form1.DeviceConnection
                             ReadOnly = true,
                             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                             BackgroundColor = Color.White,
-                            ColumnCount = 2,
+                            ColumnCount = 3,
                             RowHeadersVisible = false
                         };
                         dataGridView.Columns[0].Name = "Time";
                         dataGridView.Columns[1].Name = "Voltage";
+                        dataGridView.Columns[2].Name = "Power";
+
                         _groupBox.Controls.Add(dataGridView);
                     }
 
                     Button realTimeVoltageButton = new Button
                     {
-                        Text = "Show Real-Time Voltage",
+                        Text = "Show Real-Time Voltage and Power",
                         Dock = DockStyle.Top,
                         TextAlign = ContentAlignment.MiddleCenter,
                         ForeColor = Color.Blue
@@ -69,20 +71,21 @@ namespace Chroma.Form1.DeviceConnection
                             _timer.Tick += async (s, args) =>
                             {
                                 var voltage = await GetVoltageAsync();
+                                var power = await GetPowerAsync();
                                 var time = DateTime.Now.ToString("HH:mm:ss");
-                                dataGridView.Rows.Add(time, voltage);
+                                dataGridView.Rows.Add(time, voltage, power);
                             };
                         }
 
                         if (_timer.Enabled)
                         {
                             _timer.Stop();
-                            realTimeVoltageButton.Text = "Show Real-Time Voltage";
+                            realTimeVoltageButton.Text = "Show Real-Time Voltage and Power";
                         }
                         else
                         {
                             _timer.Start();
-                            realTimeVoltageButton.Text = "Stop Real-Time Voltage";
+                            realTimeVoltageButton.Text = "Stop Real-Time Voltage and Power";
                         }
                     };
                     _groupBox.Controls.Add(realTimeVoltageButton);
@@ -108,6 +111,17 @@ namespace Chroma.Form1.DeviceConnection
             }
 
             _connectDrive.RawIO.Write("MEAS:VOLT?\n");
+            return await Task.Run(() => _connectDrive.RawIO.ReadString());
+        }
+
+        private async Task<string> GetPowerAsync()
+        {
+            if (_connectDrive == null)
+            {
+                throw new InvalidOperationException("Device is not connected.");
+            }
+
+            _connectDrive.RawIO.Write("MEAS:POW?\n");
             return await Task.Run(() => _connectDrive.RawIO.ReadString());
         }
     }
