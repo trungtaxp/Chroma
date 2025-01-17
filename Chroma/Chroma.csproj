@@ -172,6 +172,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
@@ -191,6 +192,10 @@
   <ItemGroup>
     <Content Include=".env" />
     <Content Include=".env.example" />
+    <None Include="Resources\rs.ico" />
+    <None Include="Resources\rs_icon.ico" />
+    <None Include="Resources\rs.jpg" />
+    <None Include="Resources\rs_icon.jpg" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
