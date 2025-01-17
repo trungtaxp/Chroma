@@ -1492,7 +1492,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_59E50BBBC1F248E387676068FA39C171"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DB1A1D07506445D1B19629992FAAE620"
             {
             "Name" = "8:VoltageControllerTest"
             "Arguments" = "8:"
@@ -1500,10 +1500,10 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_312B043829124EED8669DD0EBB8BCC5C"
+            "Target" = "8:_D1D536BA03D7414C923508C41C7BE3FF"
+            "Folder" = "8:_5C458AE383184BF8AE3E375A98DEDE91"
             "WorkingFolder" = "8:_C0F53BA66C3D4E93BF2134ABBEC70974"
-            "Icon" = "8:"
+            "Icon" = "8:_A4E7A72610054D79BDA7101EF494536D"
             "Feature" = "8:"
             }
         }

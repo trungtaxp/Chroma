@@ -23,13 +23,6 @@ namespace Chroma.Form1.DeviceConnection
 
         public async Task ConnectAsync()
         {
-            Label statusLabel = new Label
-            {
-                Dock = DockStyle.Fill,
-                ForeColor = Color.Red
-            };
-            _groupBox.Controls.Add(statusLabel);
-
             try
             {
                 _connectDrive = GlobalResourceManager.Open(_config.ConnectionString) as IMessageBasedSession;
@@ -98,6 +91,12 @@ namespace Chroma.Form1.DeviceConnection
             }
             catch (Ivi.Visa.NativeVisaException e)
             {
+                Label statusLabel = new Label
+                {
+                    Dock = DockStyle.Fill,
+                    ForeColor = Color.Red
+                };
+                _groupBox.Controls.Add(statusLabel);
                 statusLabel.Text = $"Cannot connect to {_config.DeviceName}";
             }
         }

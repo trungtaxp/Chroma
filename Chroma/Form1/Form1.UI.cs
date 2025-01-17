@@ -101,6 +101,5 @@ namespace Chroma.Form1
             var aboutForm = new AboutForm();
             aboutForm.ShowDialog();
         }
-
     }
 }

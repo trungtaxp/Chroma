@@ -39,7 +39,8 @@ namespace Chroma.Form1
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = Screen.PrimaryScreen.Bounds.Size;
             this.Name = "Main";
-            this.Text = "Main";
+            this.ShowIcon = false;
+            this.Text = "Voltage Controller Test";
             this.ResumeLayout(false);
 
         }
